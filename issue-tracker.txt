@@ -1,0 +1,3 @@
+current_issue: 1
+last_generated: never
+next_publish: tuesday
