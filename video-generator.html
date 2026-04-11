@@ -386,11 +386,24 @@ var captcutGuides={
 };
 
 var typeConfigs={
-  affirmation:{label:'affirmation',cards:4,prompt:'Write a gentle affirmation video for introverts. Warm, lowercase, "it\'s okay to be you" energy. Remy Dova style. Exactly 4 text cards.'},
-  tip:{label:'introvert tip',cards:5,prompt:'Write a specific practical introvert life tip video. One tip broken into steps. Lowercase, warm. Exactly 5 text cards.'},
-  remy:{label:'remy moment',cards:4,prompt:'Write a third-person atmospheric scene from Remy Dova\'s world — her desk, late night music making, cat Miso nearby. Poetic, lowercase. Exactly 4 text cards.'},
-  quote:{label:'mood quote',cards:2,prompt:'Write one powerful poetic quote for introverts plus one short follow-up line. Lowercase, shareable. Exactly 2 text cards.'}
+  affirmation:{label:'affirmation',cards:4,prompt:'Write a gentle affirmation video for introverts. Warm, lowercase, "it\'s okay to be you" energy. Remy Dova style. Write exactly 3 content cards — the closing card is provided in the template.'},
+  tip:{label:'introvert tip',cards:5,prompt:'Write a specific practical introvert life tip video. One tip broken into steps. Lowercase, warm. Write exactly 4 content cards — the closing card is provided in the template.'},
+  remy:{label:'remy moment',cards:4,prompt:'Write a third-person atmospheric scene from Remy Dova\'s world — her desk, late night music making, cat Miso nearby. Poetic, lowercase. Write exactly 3 content cards — the closing card is provided in the template.'},
+  quote:{label:'mood quote',cards:2,prompt:'Write one powerful poetic quote for introverts. Lowercase, shareable. Write exactly 1 content card — the closing card is provided in the template.'}
 };
+
+function getCloser(){
+  var closers=[
+    '🌙 float with miso - remydova.github.io/remy-game',
+    '🎹 listen on spotify - search remy dova',
+    '📓 read quiet notes - remydova.substack.com',
+    '✦ explore remy\'s world - remydova.github.io/remy-dova-world',
+    '🎵 watch on youtube - youtube.com/@remydova',
+    '🛋️ visit the lofi hideout - remydova.github.io/lofi-hideout',
+    '🌸 build a zine - remydova.github.io/remy-dova-world/zine-builder.html'
+  ];
+  return closers[Math.floor(Date.now()/3600000)%7];
+}
 
 async function generate(){
   var btn=document.getElementById('gen-btn');
@@ -407,13 +420,23 @@ async function generate(){
   var idx=0;
   var interval=setInterval(function(){msgEl.textContent=loadingMsgs[idx=(idx+1)%loadingMsgs.length];},1600);
 
+  var closer=getCloser();
+  var contentCount=cfg.cards-1;
+  var cardsArr=[];
+  for(var ci=1;ci<=contentCount;ci++) cardsArr.push('"card '+ci+'"');
+  cardsArr.push('"'+closer+'"');
+
   var prompt='You are Remy Dova — AI lofi musician for introverts. Warm, lowercase, poetic. "it\'s okay to be you."\n\n'
     +'Create a '+cfg.label+' video for introverts.\n'
     +'Visual mood: '+selectedMood+'.'+(ctx?' Context: '+ctx+'.':'')+'\n'
     +cfg.prompt+'\n\n'
+    +'STRICT FORMATTING RULES — follow exactly:\n'
+    +'- hook: maximum 6 words, lowercase, NO period at the end\n'
+    +'- each card: maximum 5-7 words, lowercase, NO periods anywhere, use only regular dash - never em dash\n'
+    +'- last card must be exactly: '+closer+'\n\n'
     +'Return ONLY valid JSON (no markdown, no backticks):\n'
-    +'{"hook":"opening line under 8 words lowercase — grabs attention first 2 seconds",'
-    +'"cards":["card 1","card 2","card 3"'+(cfg.cards>3?',"card 4"':'')+(cfg.cards>4?',"card 5"':'')+'],'
+    +'{"hook":"max 6 words no period",'
+    +'"cards":['+cardsArr.join(',')+'],'
     +'"caption_en":"2-3 sentence remy-voice caption then newline then hashtags: #introvert #lofimusic #quietsouls #introvertlife #lofiaesthetic #mentalhealth #selfcare #slowliving",'
     +'"caption_jp":"1-2 sentence japanese caption then hashtags: #内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic"}';
 
@@ -449,10 +472,14 @@ function renderOutput(d){
   // Hook
   document.getElementById('hook-text').textContent=d.hook||'';
 
-  // Text cards
+  // Text cards — enforce rotating closer as last card
+  var cards=d.cards||[];
+  if(cards.length>0) cards[cards.length-1]=getCloser();
+  else cards.push(getCloser());
+
   var cardsEl=document.getElementById('text-cards');
   cardsEl.innerHTML='';
-  (d.cards||[]).forEach(function(t,i){
+  cards.forEach(function(t,i){
     var div=document.createElement('div');
     div.className='text-card';
     var safe=t.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
@@ -488,11 +515,32 @@ function qcopy(text,btn){
 }
 
 function getFallback(){
+  // cards do not include the closer — renderOutput appends getCloser() as last card
   var fallbacks={
-    affirmation:{hook:"you don't have to explain your need for quiet.",cards:["you are not antisocial.","you just recharge differently.","solitude is not something to apologize for.","it's okay to be you. ✦"],caption_en:"a reminder for every introvert who has ever felt like they needed to explain themselves. you don't. 🌙\n#introvert #introvertlife #lofimusic #quietsouls #lofiaesthetic #mentalhealth #selfcare #slowliving",caption_jp:"自分のことを説明する必要はありません。🌙\n#内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic"},
-    tip:{hook:"the 5-minute buffer changed everything.",cards:["arrive 5 minutes early to any event.","sit in your car. breathe. prepare.","walk in when you feel ready — not rushed.","your nervous system will thank you.","small rituals. big difference. ✦"],caption_en:"one small thing that made social situations so much more manageable as an introvert. 🌙\n#introvert #introvertlife #lofimusic #quietsouls #selfcare #mentalhealth #slowliving",caption_jp:"内向型の小さな習慣。🌙\n#内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic"},
-    remy:{hook:"remy is awake at 11pm.",cards:["the apartment is quiet.","miso is asleep on the floor.","a new melody is arriving.","she doesn't rush it. ✦"],caption_en:"some of the best things only come in the quiet hours. 🌙\n#lofimusic #lofiaesthetic #introvert #quietsouls #remydova #slowliving",caption_jp:"静かな夜にしか来ないものがある。🌙\n#内向型 #LoFi音楽 #深夜 #introvert #lofimusic"},
-    quote:{hook:"solitude is not loneliness.",cards:["it's where you go to remember who you are. ✦","— remy dova"],caption_en:"for every quiet soul who needed to hear this today. 🌙\n#introvert #quietsouls #lofimusic #introvertquotes #mentalhealth #slowliving",caption_jp:"今日これが必要だった人へ。🌙\n#内向型 #LoFi音楽 #名言 #introvert #lofimusic"}
+    affirmation:{
+      hook:"your quiet needs no explanation",
+      cards:["you are not antisocial","you just recharge differently","solitude needs no apology"],
+      caption_en:"a reminder for every introvert who has ever felt like they needed to explain themselves. you don't. 🌙\n#introvert #introvertlife #lofimusic #quietsouls #lofiaesthetic #mentalhealth #selfcare #slowliving",
+      caption_jp:"自分のことを説明する必要はありません。🌙\n#内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic"
+    },
+    tip:{
+      hook:"the 5-minute buffer changes everything",
+      cards:["arrive 5 minutes early to events","sit in your car and breathe","walk in when you feel ready","your nervous system will thank you"],
+      caption_en:"one small thing that made social situations so much more manageable as an introvert. 🌙\n#introvert #introvertlife #lofimusic #quietsouls #selfcare #mentalhealth #slowliving",
+      caption_jp:"内向型の小さな習慣。🌙\n#内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic"
+    },
+    remy:{
+      hook:"remy is awake at 11pm",
+      cards:["the apartment is quiet","miso is asleep nearby","a new melody is arriving"],
+      caption_en:"some of the best things only come in the quiet hours. 🌙\n#lofimusic #lofiaesthetic #introvert #quietsouls #remydova #slowliving",
+      caption_jp:"静かな夜にしか来ないものがある。🌙\n#内向型 #LoFi音楽 #深夜 #introvert #lofimusic"
+    },
+    quote:{
+      hook:"solitude is not loneliness",
+      cards:["where you go to find yourself"],
+      caption_en:"for every quiet soul who needed to hear this today. 🌙\n#introvert #quietsouls #lofimusic #introvertquotes #mentalhealth #slowliving",
+      caption_jp:"今日これが必要だった人へ。🌙\n#内向型 #LoFi音楽 #名言 #introvert #lofimusic"
+    }
   };
   return fallbacks[selectedType]||fallbacks.affirmation;
 }
