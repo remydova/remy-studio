@@ -99,6 +99,12 @@ nav{position:sticky;top:0;z-index:500;background:rgba(12,12,24,0.9);backdrop-fil
 .btn-copy-hook{font-family:'Caveat',cursive;font-size:0.72rem;color:var(--tmuted);background:transparent;border:1px solid var(--border);border-radius:10px;padding:0.1rem 0.5rem;cursor:none;transition:all 0.15s;flex-shrink:0;}
 .btn-copy-hook:hover{border-color:var(--aborder);color:var(--amber);}
 
+/* DESCRIPTION */
+.desc-section{margin-bottom:0.75rem;}
+.desc-body{font-size:0.82rem;color:var(--tdim2);line-height:1.8;white-space:pre-wrap;background:var(--surf2);border-radius:8px;padding:0.65rem 0.85rem;}
+.btn-copy-desc{font-family:'Caveat',cursive;font-size:0.75rem;color:var(--tmuted);background:transparent;border:1px solid var(--border);border-radius:10px;padding:0.2rem 0.6rem;cursor:none;margin-top:0.4rem;display:inline-block;transition:all 0.15s;}
+.btn-copy-desc:hover{border-color:var(--aborder);color:var(--amber);}
+
 /* IMAGE LEGEND */
 .img-legend{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:1rem;}
 .img-leg-item{background:var(--surf);border:1px solid var(--border);border-radius:10px;padding:0.65rem 0.75rem;text-align:center;}
@@ -251,6 +257,13 @@ footer a{color:var(--teal);text-decoration:none;}
       <button class="btn-copy-cap" id="cap-copy-btn" onclick="copyCap()">copy caption</button>
     </div>
 
+    <!-- DESCRIPTION -->
+    <div class="desc-section">
+      <div class="cards-lbl">✦ youtube / tiktok description</div>
+      <div class="desc-body" id="desc-body"></div>
+      <button class="btn-copy-desc" id="desc-copy-btn" onclick="copyDesc()">copy description</button>
+    </div>
+
   </div>
 </div>
 
@@ -263,6 +276,70 @@ footer a{color:var(--teal);text-decoration:none;}
 (function(){var c=document.getElementById('rain-canvas'),x=c.getContext('2d'),d=[];function r(){c.width=window.innerWidth;c.height=window.innerHeight;}window.addEventListener('resize',r);r();for(var i=0;i<100;i++)d.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,l:Math.random()*15+8,s:Math.random()*2+1.5,o:Math.random()*0.25+0.05});function draw(){x.clearRect(0,0,c.width,c.height);d.forEach(function(p){x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x-p.l*0.2,p.y+p.l);x.strokeStyle='rgba(180,200,220,'+p.o+')';x.lineWidth=0.8;x.stroke();p.y+=p.s;if(p.y>c.height){p.y=-p.l;p.x=Math.random()*c.width;}});requestAnimationFrame(draw);}draw();})();
 (function(){var s=document.getElementById('stars-container');for(var i=0;i<60;i++){var e=document.createElement('div'),z=Math.random()*2.5+0.5;e.style.cssText='position:absolute;border-radius:50%;background:rgba(232,221,208,0.8);width:'+z+'px;height:'+z+'px;top:'+Math.random()*100+'%;left:'+Math.random()*100+'%;animation:twinkle '+(Math.random()*3+2)+'s ease-in-out '+(Math.random()*4)+'s infinite alternate;';s.appendChild(e);}})();
 (function(){var p=document.getElementById('petals-container'),c=['✿','❀','✽','❁'];for(var i=0;i<18;i++){var e=document.createElement('div');e.textContent=c[i%4];e.style.cssText='position:absolute;top:-20px;font-size:0.8rem;color:rgba(212,149,106,0.5);left:'+Math.random()*100+'vw;animation:petalFall '+(Math.random()*14+10)+'s '+(Math.random()*12)+'s linear infinite;';p.appendChild(e);}})();
+
+var songs=[
+  {title:'Chasing Fireflies',url:'https://youtu.be/7SXAG51wZmY',vibe:'glowing butterflies in the night, asian cozy homes'},
+  {title:'Whispering Dreams',url:'https://youtu.be/17HA6R7sWSg',vibe:'female with flowing dark hair with stars and flowers'},
+  {title:'Starlit Drive',url:'https://youtu.be/wgYDCkI8wRw',vibe:'stars and winding roads with cars'},
+  {title:'Lost in Echoes',url:'https://youtu.be/Mo58n6BUEIw',vibe:'vinyl and beautiful lofi woman'},
+  {title:'Neon Reverie',url:'https://youtu.be/-rDKmaB7JpI',vibe:'psychedelic shapes and dragons'},
+  {title:'Past Present Forever',url:'https://youtu.be/6xl20SVvCtM',vibe:'beautiful woman in jeans, clocks, and sandcastles'},
+  {title:'Sunkissed Groove',url:'https://youtu.be/1lSsa9wvdu8',vibe:'sunset on a beach, seagulls, female surfers'},
+  {title:'Fading Lanterns',url:'https://youtu.be/PlV9inNIprA',vibe:'floating lanterns and countryside'},
+  {title:'Mystic Tide',url:'https://youtu.be/pDD26E5ywa4',vibe:'sea life, jellyfish, mermaid, flowers'},
+  {title:'Space Voyage',url:'https://youtu.be/FGiftmJW39Q',vibe:'astronaut in space and woman on earth'},
+  {title:'Sunlit Vibes',url:'https://youtu.be/HIqJy9A-QKA',vibe:'a field of dandelions and females'},
+  {title:'Morning Light',url:'https://youtu.be/H_NO_NoZ3Go',vibe:'stars and night sky then emerging sunrise women'},
+  {title:'Seaside Awakening',url:'https://youtu.be/07XOAgYp4rc',vibe:'ocean waves and rising sun'},
+  {title:'Sunrise Farewell',url:'https://youtu.be/iS58_Dq0ZpI',vibe:'sunrise, woman with flowing hair'},
+  {title:'Vinyl Memories',url:'https://youtu.be/Ms-DKGM2VmU',vibe:'lofi girl making music on turntables'},
+  {title:'Quiet Bloom',url:'https://youtu.be/NSpciJbZw_M',vibe:'lofi girl, blooms emerging in snow'},
+  {title:'Discord at Dusk',url:'https://youtu.be/e3dIW6HMRvg',vibe:'piano, trippy, female'},
+  {title:'Across the Sea',url:'https://youtu.be/Cb9briJitmU',vibe:'ocean and female'},
+  {title:'Daydream Transit',url:'https://youtu.be/rAHyEATbACY',vibe:'women on a train'},
+  {title:'Smoke Signals',url:'https://youtu.be/11HuUofUCxE',vibe:'smoke signals, mountains, close up of woman'},
+  {title:'Neon Reflections',url:'https://youtu.be/ltBaJma10LI',vibe:'neon streets with women'},
+  {title:'Veil of Sleep',url:'https://youtu.be/J2ayQYc7Te8',vibe:'cloudy night sky with women'},
+  {title:'River\'s Edge',url:'https://youtu.be/Sd7nUH8ErTU',vibe:'colorful trippy river, woman with long flowing hair'},
+  {title:'Ghost Letters',url:'https://youtu.be/kA2TJcjEIkg',vibe:'fantasy countryside, woman with long flowing hair'},
+  {title:'Evening Stroll',url:'https://youtu.be/uyXZTv5ZfOc',vibe:'cobblestone streets and woman'},
+  {title:'Through the Haze',url:'https://youtu.be/zMQOXqEjAHI',vibe:'hazy sunrise, woman'},
+  {title:'Streetlight Shadows',url:'https://youtu.be/6_kSx5kbI_Q',vibe:'evening streetlights, woman'},
+  {title:'Moonlit Whispers',url:'https://youtu.be/B-YF1juW0KM',vibe:'woman with stars in her hair, city skyline'},
+  {title:'Midnight Transit',url:'https://youtu.be/jkusZ4zw3Hw',vibe:'trippy train and woman'},
+  {title:'Velvet Memories',url:'https://youtu.be/VF3eqFVzGgM',vibe:'old school turntable and woman'},
+  {title:'Rainfall on Riverstone',url:'https://youtu.be/LzYvWpOJPYA',vibe:'rain on rocks and a woman'},
+  {title:'Coastal Dreams',url:'https://youtu.be/MPrvuJpjnGo',vibe:'trippy coast and woman'},
+  {title:'Twilight Cassette',url:'https://youtu.be/nD41FkohL2c',vibe:'trippy tree and water and woman'},
+  {title:'Paper Lanterns',url:'https://youtu.be/kXKuooZxEow',vibe:'paper lanterns and women'}
+];
+
+var descProperties=[
+  '🌙 miso floats — remydova.github.io/remy-game/miso-floats.html',
+  '🎹 spotify — search remy dova',
+  '📓 quiet notes — remydova.substack.com',
+  '✦ remy\'s world — remydova.github.io/remy-dova-world',
+  '🎵 youtube — youtube.com/@remydova',
+  '🛋️ lofi hideout — remydova.github.io/lofi-hideout'
+];
+
+var closerProperties=[
+  '🌙 float with miso - remydova.github.io/remy-game/miso-floats.html',
+  '🎹 listen on spotify - search remy dova',
+  '📓 read quiet notes - remydova.substack.com',
+  '✦ explore remy\'s world - remydova.github.io/remy-dova-world',
+  '🎵 watch on youtube - youtube.com/@remydova',
+  '🛋️ visit the lofi hideout - remydova.github.io/lofi-hideout'
+];
+
+function getSongIndex(){return parseInt(localStorage.getItem('songIndex')||'0')%34;}
+function getDescPropIndex(){return parseInt(localStorage.getItem('descPropertyIndex')||'0')%6;}
+function getCloserIndex(){return parseInt(localStorage.getItem('closerIndex')||'0')%6;}
+function advanceIndices(){
+  localStorage.setItem('songIndex',(getSongIndex()+1)%34);
+  localStorage.setItem('descPropertyIndex',(getDescPropIndex()+1)%6);
+  localStorage.setItem('closerIndex',(getCloserIndex()+1)%6);
+}
 
 var selectedType='affirmation';
 var selectedVisual={visual:'remy-close',img:'remy_video_start_image',effect:'slow zoom in · subtle hair shimmer'};
@@ -382,16 +459,7 @@ var typeConfigs={
 };
 
 function getCloser(){
-  var closers=[
-    '🌙 float with miso - remydova.github.io/remy-game',
-    '🎹 listen on spotify - search remy dova',
-    '📓 read quiet notes - remydova.substack.com',
-    '✦ explore remy\'s world - remydova.github.io/remy-dova-world',
-    '🎵 watch on youtube - youtube.com/@remydova',
-    '🛋️ visit the lofi hideout - remydova.github.io/lofi-hideout',
-    '🌸 build a zine - remydova.github.io/remy-dova-world/zine-builder.html'
-  ];
-  return closers[Math.floor(Date.now()/3600000)%7];
+  return closerProperties[getCloserIndex()];
 }
 
 async function generate(){
@@ -410,6 +478,7 @@ async function generate(){
   var interval=setInterval(function(){msgEl.textContent=loadingMsgs[idx=(idx+1)%loadingMsgs.length];},1600);
 
   var closer=getCloser();
+  var song=songs[getSongIndex()];
   var contentCount=cfg.cards-1;
   var cardsArr=[];
   for(var ci=1;ci<=contentCount;ci++) cardsArr.push('"card '+ci+'"');
@@ -419,6 +488,7 @@ async function generate(){
     +'Create a '+cfg.label+' video for introverts.\n'
     +'Visual mood: '+selectedMood+'.'+(ctx?' Context: '+ctx+'.':'')+'\n'
     +cfg.prompt+'\n\n'
+    +'Featured song: "'+song.title+'" — visual vibe: '+song.vibe+'.\n\n'
     +'STRICT FORMATTING RULES — follow exactly:\n'
     +'- hook: maximum 6 words, lowercase, NO period at the end\n'
     +'- each card: maximum 5-7 words, lowercase, NO periods anywhere, use only regular dash - never em dash\n'
@@ -427,13 +497,14 @@ async function generate(){
     +'{"hook":"max 6 words no period",'
     +'"cards":['+cardsArr.join(',')+'],'
     +'"caption_en":"2-3 sentence remy-voice caption then newline then hashtags: #introvert #lofimusic #quietsouls #introvertlife #lofiaesthetic #mentalhealth #selfcare #slowliving",'
-    +'"caption_jp":"1-2 sentence japanese caption then hashtags: #内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic"}';
+    +'"caption_jp":"1-2 sentence japanese caption then hashtags: #内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic",'
+    +'"description_text":"starts with \'hey friend\' — 2-4 warm lowercase remy-voice sentences themed to the song\'s visual vibe ('+song.vibe+'). intimate and poetic. no song link, no hashtags."}';
 
   var data=null;
   try{
     var res=await fetch('https://remy-claude-proxy.gkstutler.workers.dev',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:900,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1200,messages:[{role:'user',content:prompt}]})
     });
     var json=await res.json();
     if(json.error)throw new Error(json.error.message);
@@ -452,6 +523,9 @@ async function generate(){
 }
 
 function renderOutput(d){
+  var song=songs[getSongIndex()];
+  var prop=descProperties[getDescPropIndex()];
+
   // CapCut guide
   var guide=captcutGuides[selectedVisual.visual]||captcutGuides['remy-close'];
   document.getElementById('capcut-img-name').textContent=guide.name;
@@ -481,6 +555,13 @@ function renderOutput(d){
   // Captions
   document.getElementById('cap-en').textContent=d.caption_en||'';
   document.getElementById('cap-jp').textContent=d.caption_jp||'';
+
+  // Description — assemble from Claude text + song link + property + hashtags
+  var descText=(d.description_text||'hey friend, something quiet is settling in.')+'\n\n🎵 '+song.title+' — '+song.url+'\n\n'+prop+'\n\n#introvert #lofimusic #quietsouls #remydova #lofiaesthetic #slowliving';
+  document.getElementById('desc-body').textContent=descText;
+
+  // Advance all indices for next generation
+  advanceIndices();
 }
 
 function swapCap(lang,btn){
@@ -497,6 +578,10 @@ function copyCap(){
   qcopy(el.textContent,btn);
 }
 
+function copyDesc(){
+  qcopy(document.getElementById('desc-body').textContent,document.getElementById('desc-copy-btn'));
+}
+
 function qcopy(text,btn){
   navigator.clipboard.writeText(text).then(function(){
     var o=btn.textContent;btn.textContent='✓';setTimeout(function(){btn.textContent=o;},1800);
@@ -510,25 +595,29 @@ function getFallback(){
       hook:"your quiet needs no explanation",
       cards:["you are not antisocial","you just recharge differently","solitude needs no apology"],
       caption_en:"a reminder for every introvert who has ever felt like they needed to explain themselves. you don't. 🌙\n#introvert #introvertlife #lofimusic #quietsouls #lofiaesthetic #mentalhealth #selfcare #slowliving",
-      caption_jp:"自分のことを説明する必要はありません。🌙\n#内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic"
+      caption_jp:"自分のことを説明する必要はありません。🌙\n#内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic",
+      description_text:"hey friend, this one is for those nights when the quiet feels like home and the world outside feels like a lot. you don't have to explain the way you recharge."
     },
     tip:{
       hook:"the 5-minute buffer changes everything",
       cards:["arrive 5 minutes early to events","sit in your car and breathe","walk in when you feel ready","your nervous system will thank you"],
       caption_en:"one small thing that made social situations so much more manageable as an introvert. 🌙\n#introvert #introvertlife #lofimusic #quietsouls #selfcare #mentalhealth #slowliving",
-      caption_jp:"内向型の小さな習慣。🌙\n#内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic"
+      caption_jp:"内向型の小さな習慣。🌙\n#内向型 #LoFi音楽 #内向型あるある #introvert #lofimusic",
+      description_text:"hey friend, small rituals are the whole thing for us. a few extra minutes to breathe before walking in — it changes everything about how the night goes."
     },
     remy:{
       hook:"remy is awake at 11pm",
       cards:["the apartment is quiet","miso is asleep nearby","a new melody is arriving"],
       caption_en:"some of the best things only come in the quiet hours. 🌙\n#lofimusic #lofiaesthetic #introvert #quietsouls #remydova #slowliving",
-      caption_jp:"静かな夜にしか来ないものがある。🌙\n#内向型 #LoFi音楽 #深夜 #introvert #lofimusic"
+      caption_jp:"静かな夜にしか来ないものがある。🌙\n#内向型 #LoFi音楽 #深夜 #introvert #lofimusic",
+      description_text:"hey friend, it's past eleven and remy is still at the keyboard. miso is somewhere nearby, half-asleep. the melody that's been half-formed for weeks is finally arriving."
     },
     quote:{
       hook:"solitude is not loneliness",
       cards:["where you go to find yourself"],
       caption_en:"for every quiet soul who needed to hear this today. 🌙\n#introvert #quietsouls #lofimusic #introvertquotes #mentalhealth #slowliving",
-      caption_jp:"今日これが必要だった人へ。🌙\n#内向型 #LoFi音楽 #名言 #introvert #lofimusic"
+      caption_jp:"今日これが必要だった人へ。🌙\n#内向型 #LoFi音楽 #名言 #introvert #lofimusic",
+      description_text:"hey friend, there's a difference between being alone and being lonely — and i think you already know it. this one is just a quiet reminder."
     }
   };
   return fallbacks[selectedType]||fallbacks.affirmation;
