@@ -123,20 +123,20 @@ footer a{color:var(--teal);text-decoration:none;}
     <li><a href="newsletter-generator.html">quiet notes</a></li>
     <li><a href="video-generator.html" class="active">video gen</a></li>
   </ul>
-  <a href="https://www.capcut.com" target="_blank" class="nav-right">open capcut ↗</a>
+  <a href="https://www.freepik.com/spaces" target="_blank" class="nav-right">open freepik spaces ↗</a>
 </nav>
 
 <div class="page-header">
   <div class="page-eyebrow">✦ remy studio</div>
   <h1 class="page-title">the <em>video generator</em></h1>
-  <p class="page-sub">claude writes the scripts · you build in capcut · ~10 min per video · no APIs needed</p>
+  <p class="page-sub">claude writes the scripts · you build in freepik spaces · ~10 min per video · no APIs needed</p>
 </div>
 
 <div class="main">
 
   <!-- IMAGE LEGEND -->
   <div class="card">
-    <span class="lbl">✦ your remy images — use these in capcut</span>
+    <span class="lbl">✦ your remy images — upload these in freepik spaces</span>
     <div class="img-legend">
       <div class="img-leg-item">
         <span class="img-leg-icon">🎧</span>
@@ -154,7 +154,7 @@ footer a{color:var(--teal);text-decoration:none;}
         <span class="img-leg-desc">city rain · umbrella · neon · moody quotes + melancholy</span>
       </div>
     </div>
-    <p style="font-family:'Caveat',cursive;font-size:0.8rem;color:var(--tmuted);">for non-remy videos: use capcut stock library → search "rain window", "candle bokeh", "coffee steam", "autumn leaves"</p>
+    <p style="font-family:'Caveat',cursive;font-size:0.8rem;color:var(--tmuted);">for non-remy videos: use freepik AI to generate your start image — describe the scene and animate it with the video generator node</p>
   </div>
 
   <!-- VIDEO TYPE -->
@@ -175,10 +175,10 @@ footer a{color:var(--teal);text-decoration:none;}
       <button class="chip remy-chip on" data-visual="remy-close" data-img="remy_video_start_image" data-effect="slow zoom in · subtle hair shimmer">🎧 remy close-up</button>
       <button class="chip remy-chip" data-visual="remy-desk" data-img="remy-desk" data-effect="string lights flicker · slow pan right">🎹 remy at desk</button>
       <button class="chip remy-chip" data-visual="remy-rain" data-img="remy-rain" data-effect="rain overlay · slow zoom out">🌧️ remy in rain</button>
-      <button class="chip" data-visual="stock-rain" data-img="capcut stock" data-effect="rain window · bokeh · slow push in">🪟 rain window</button>
-      <button class="chip" data-visual="stock-candle" data-img="capcut stock" data-effect="candle flicker · warm glow · still">🕯️ candle</button>
-      <button class="chip" data-visual="stock-coffee" data-img="capcut stock" data-effect="steam rising · slow zoom · warm tones">☕ coffee steam</button>
-      <button class="chip" data-visual="stock-autumn" data-img="capcut stock" data-effect="leaves falling · golden light · slow pan">🍂 autumn</button>
+      <button class="chip" data-visual="stock-rain" data-img="freepik ai" data-effect="rain window · bokeh · slow push in">🪟 rain window</button>
+      <button class="chip" data-visual="stock-candle" data-img="freepik ai" data-effect="candle flicker · warm glow · still">🕯️ candle</button>
+      <button class="chip" data-visual="stock-coffee" data-img="freepik ai" data-effect="steam rising · slow zoom · warm tones">☕ coffee steam</button>
+      <button class="chip" data-visual="stock-autumn" data-img="freepik ai" data-effect="leaves falling · golden light · slow pan">🍂 autumn</button>
     </div>
   </div>
 
@@ -203,7 +203,7 @@ footer a{color:var(--teal);text-decoration:none;}
   <!-- GENERATE -->
   <div class="gen-wrap">
     <button class="gen-btn" id="gen-btn" onclick="generate()">✦ generate video script</button>
-    <div class="gen-hint">claude writes the script · capcut instructions included · ~10 min to finish</div>
+    <div class="gen-hint">claude writes the script · freepik spaces instructions included · ~10 min to finish</div>
   </div>
 
   <!-- LOADING -->
@@ -222,7 +222,7 @@ footer a{color:var(--teal);text-decoration:none;}
     <!-- CAPCUT GUIDE -->
     <div class="capcut-box" id="capcut-box">
       <div class="capcut-header">
-        <span class="capcut-badge">✦ capcut steps</span>
+        <span class="capcut-badge">✦ freepik spaces</span>
         <span class="capcut-img" id="capcut-img-name"></span>
       </div>
       <ol class="capcut-steps" id="capcut-steps"></ol>
@@ -236,7 +236,7 @@ footer a{color:var(--teal);text-decoration:none;}
     </div>
 
     <!-- TEXT CARDS -->
-    <div class="cards-lbl">✦ text overlays — add in capcut in this order</div>
+    <div class="cards-lbl">✦ text overlays — add in freepik spaces in this order</div>
     <div class="text-cards" id="text-cards"></div>
 
     <!-- CAPTION -->
@@ -298,89 +298,78 @@ var captcutGuides={
   'remy-close':{
     name:'🎧 remy_video_start_image.png',
     steps:[
-      'import <em>remy_video_start_image.png</em> → set as background · crop to 9:16',
-      'apply <em>photo motion → slow zoom in</em> · duration: full video length',
-      'add a <em>warm bokeh overlay</em> from effects library at ~30% opacity',
-      'add text overlays in order below · font: <em>thin serif or handwritten</em> · white or cream color',
-      'use <em>fade in / fade out</em> on each text card · 0.5s transition',
-      'add remy\'s music track · set volume to 80% · add gentle fade out at end',
-      'export 1080×1920 · paste caption below · post ✦'
+      'open <em>freepik.com/spaces</em> — start a new space or open your remy template',
+      'upload node — add <em>remy_video_start_image.png</em> as your start image',
+      'video generator node — paste the hook as your prompt · select <em>Kling motion control</em> · set to <em>9:16 vertical</em>',
+      'text node — add cards one at a time in order · font: <em>thin serif</em> · color: white or warm cream · fade in / fade out on each',
+      'audio node — upload remy\'s track · set volume to <em>80%</em> · fade out at end',
+      'export <em>1080×1920</em> — download and post ✦'
     ]
   },
   'remy-desk':{
     name:'🎹 remy-desk.png',
     steps:[
-      'import <em>remy-desk.png</em> → set as background · crop to 9:16',
-      'apply <em>photo motion → slow pan right</em> · duration: full video length',
-      'add <em>light leak or bokeh overlay</em> at ~20% opacity to enhance string lights',
-      'optional: add a subtle <em>candle flicker effect</em> from effects library',
-      'add text overlays in order below · font: <em>thin serif</em> · white or soft cream',
-      'use <em>fade in / fade out</em> on each text card · 0.5s transition',
-      'add remy\'s music track · volume 80% · fade out last 2 seconds',
-      'export 1080×1920 · paste caption · post ✦'
+      'open <em>freepik.com/spaces</em> — start a new space or open your remy template',
+      'upload node — add <em>remy-desk.png</em> as your start image',
+      'video generator node — paste the hook as your prompt · select <em>Kling motion control</em> · set to <em>9:16 vertical</em>',
+      'text node — add cards one at a time in order · font: <em>thin serif</em> · color: white or warm cream · fade in / fade out on each',
+      'audio node — upload remy\'s track · set volume to <em>80%</em> · fade out at end',
+      'export <em>1080×1920</em> — download and post ✦'
     ]
   },
   'remy-rain':{
     name:'🌧️ remy-rain.png',
     steps:[
-      'import <em>remy-rain.png</em> → set as background · crop to 9:16',
-      'apply <em>photo motion → slow zoom out</em> · duration: full video length',
-      'add a <em>rain overlay</em> from capcut effects library at ~40% opacity',
-      'add a very subtle <em>blue/teal color grade</em> to enhance the night city feel',
-      'add text overlays in order below · font: <em>thin serif or light sans</em> · white',
-      'use <em>fade in / fade out</em> on each text card · 0.5s transition',
-      'add remy\'s music track · volume 75% · this image suits slower, quieter tracks',
-      'export 1080×1920 · paste caption · post ✦'
+      'open <em>freepik.com/spaces</em> — start a new space or open your remy template',
+      'upload node — add <em>remy-rain.png</em> as your start image',
+      'video generator node — paste the hook as your prompt · select <em>Kling motion control</em> · set to <em>9:16 vertical</em>',
+      'text node — add cards one at a time in order · font: <em>thin serif</em> · color: white · fade in / fade out on each',
+      'audio node — upload remy\'s track · set volume to <em>75%</em> · fade out at end',
+      'export <em>1080×1920</em> — download and post ✦'
     ]
   },
   'stock-rain':{
-    name:'🪟 capcut stock: rain window',
+    name:'🪟 generate: rain window',
     steps:[
-      'open capcut stock library → search <em>"rain window"</em> or <em>"rainy night bokeh"</em>',
-      'pick a clip with soft warm interior light · import as background · crop to 9:16',
-      'apply <em>slow zoom in</em> or leave motion as-is if clip already has movement',
-      'add text overlays in order below · font: <em>thin serif</em> · white or cream',
-      'use <em>fade in / fade out</em> on each text card · 0.5s transition',
-      'add remy\'s music · volume 80% · fade out at end',
-      'export 1080×1920 · paste caption · post ✦'
+      'open <em>freepik.com/spaces</em> — start a new space',
+      'use freepik AI to generate a <em>rain window interior · warm bokeh · night</em> image as your start image',
+      'video generator node — paste the hook as your prompt · select <em>Kling motion control</em> · set to <em>9:16 vertical</em>',
+      'text node — add cards one at a time in order · font: <em>thin serif</em> · color: white or cream · fade in / fade out on each',
+      'audio node — upload remy\'s track · set volume to <em>80%</em> · fade out at end',
+      'export <em>1080×1920</em> — download and post ✦'
     ]
   },
   'stock-candle':{
-    name:'🕯️ capcut stock: candle',
+    name:'🕯️ generate: candle bokeh',
     steps:[
-      'open capcut stock library → search <em>"candle bokeh"</em> or <em>"candlelight warm"</em>',
-      'pick a close-up candle clip with soft blur · import as background · crop to 9:16',
-      'slow it down to <em>50% speed</em> if needed for a more meditative feel',
-      'add text overlays in order below · font: <em>thin serif or script</em> · cream/white',
-      'use <em>fade in / fade out</em> on each text card · 0.5s transition',
-      'add remy\'s music · volume 80% · fade out at end',
-      'export 1080×1920 · paste caption · post ✦'
+      'open <em>freepik.com/spaces</em> — start a new space',
+      'use freepik AI to generate a <em>candle close-up · warm bokeh · soft blur</em> image as your start image',
+      'video generator node — paste the hook as your prompt · select <em>Kling motion control</em> · set to <em>9:16 vertical</em>',
+      'text node — add cards one at a time in order · font: <em>thin serif or script</em> · color: cream or white · fade in / fade out on each',
+      'audio node — upload remy\'s track · set volume to <em>80%</em> · fade out at end',
+      'export <em>1080×1920</em> — download and post ✦'
     ]
   },
   'stock-coffee':{
-    name:'☕ capcut stock: coffee steam',
+    name:'☕ generate: coffee steam',
     steps:[
-      'open capcut stock library → search <em>"coffee steam"</em> or <em>"tea morning light"</em>',
-      'pick a clip with rising steam · warm morning light preferred · crop to 9:16',
-      'apply <em>slow zoom in</em> or keep original motion',
-      'add a <em>warm color grade</em> (slight orange/amber tone) if needed',
-      'add text overlays in order below · font: <em>thin serif</em> · white or light cream',
-      'use <em>fade in / fade out</em> on each text card · 0.5s transition',
-      'add remy\'s music · volume 80% · fade out at end',
-      'export 1080×1920 · paste caption · post ✦'
+      'open <em>freepik.com/spaces</em> — start a new space',
+      'use freepik AI to generate a <em>coffee steam · morning light · warm tones</em> image as your start image',
+      'video generator node — paste the hook as your prompt · select <em>Kling motion control</em> · set to <em>9:16 vertical</em>',
+      'text node — add cards one at a time in order · font: <em>thin serif</em> · color: white or light cream · fade in / fade out on each',
+      'audio node — upload remy\'s track · set volume to <em>80%</em> · fade out at end',
+      'export <em>1080×1920</em> — download and post ✦'
     ]
   },
   'stock-autumn':{
-    name:'🍂 capcut stock: autumn',
+    name:'🍂 generate: autumn leaves',
     steps:[
-      'open capcut stock library → search <em>"autumn leaves falling"</em> or <em>"fall bokeh"</em>',
-      'pick a clip with golden light and gentle leaf movement · crop to 9:16',
-      'apply <em>slow zoom out</em> or leave natural motion',
-      'add a <em>warm golden color grade</em> at ~20% if needed',
-      'add text overlays in order below · font: <em>thin serif</em> · white or warm cream',
-      'use <em>fade in / fade out</em> on each text card · 0.5s transition',
-      'add remy\'s music · volume 80% · fade out at end',
-      'export 1080×1920 · paste caption · post ✦'
+      'open <em>freepik.com/spaces</em> — start a new space',
+      'use freepik AI to generate an <em>autumn leaves · golden light · bokeh</em> image as your start image',
+      'video generator node — paste the hook as your prompt · select <em>Kling motion control</em> · set to <em>9:16 vertical</em>',
+      'text node — add cards one at a time in order · font: <em>thin serif</em> · color: warm cream or white · fade in / fade out on each',
+      'audio node — upload remy\'s track · set volume to <em>80%</em> · fade out at end',
+      'export <em>1080×1920</em> — download and post ✦'
     ]
   }
 };
