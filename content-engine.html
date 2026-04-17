@@ -337,12 +337,28 @@ textarea::placeholder{color:var(--text-muted);font-style:italic;}
 .pin-footer{margin-top:auto;padding-top:0.5rem;}
 
 /* ── YOUTUBE TAB ── */
+.yt-title-bar{
+  display:flex;align-items:center;gap:0.75rem;
+  background:var(--surf2);border:1px solid var(--aborder);
+  border-radius:10px;padding:0.75rem 1rem;
+}
+.yt-title-label{
+  font-family:'Caveat',cursive;font-size:0.72rem;
+  color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;
+  white-space:nowrap;
+}
+.yt-title-text{
+  flex:1;font-family:'Playfair Display',serif;font-weight:400;
+  font-size:0.95rem;color:var(--amber);
+}
 .yt-preview{
   background:var(--surf2);border:1px solid var(--border);
   border-radius:12px;padding:1.5rem;
   font-size:0.9rem;line-height:1.75;
 }
+.yt-hook{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;color:var(--text);margin-bottom:0.75rem;}
 .yt-body{color:var(--text);margin-bottom:0.75rem;}
+.yt-closer{color:var(--text-dim);font-style:italic;margin-bottom:0.75rem;}
 .yt-song{color:var(--amber);margin:0.5rem 0;}
 .yt-property{color:var(--teal);margin:0.5rem 0;}
 .yt-hashtags{font-family:'Caveat',cursive;color:var(--lav);font-size:0.85rem;margin-top:0.75rem;}
@@ -517,7 +533,12 @@ textarea::placeholder{color:var(--text-muted);font-style:italic;}
 
     <!-- YOUTUBE -->
     <div class="tab-panel" id="tab-youtube">
-      <div class="action-row">
+      <div class="yt-title-bar" id="yt-title-bar" style="display:none">
+        <div class="yt-title-label">title</div>
+        <div class="yt-title-text" id="yt-title-text"></div>
+        <button class="copy-btn" id="copy-yt-title">copy title</button>
+      </div>
+      <div class="action-row" style="margin-top:1rem">
         <button class="copy-btn" id="copy-yt">copy description</button>
       </div>
       <div class="yt-preview" id="yt-preview"></div>
@@ -544,40 +565,40 @@ const PROXY = 'https://remy-claude-proxy.gkstutler.workers.dev';
 const MODEL = 'claude-sonnet-4-20250514';
 
 const SONGS = [
-  {t:'Chasing Fireflies',      u:'https://youtu.be/7SXAG51wZmY'},
-  {t:'Whispering Dreams',      u:'https://youtu.be/17HA6R7sWSg'},
-  {t:'Starlit Drive',          u:'https://youtu.be/wgYDCkI8wRw'},
-  {t:'Lost in Echoes',         u:'https://youtu.be/Mo58n6BUEIw'},
-  {t:'Neon Reverie',           u:'https://youtu.be/-rDKmaB7JpI'},
-  {t:'Past Present Forever',   u:'https://youtu.be/6xl20SVvCtM'},
-  {t:'Sunkissed Groove',       u:'https://youtu.be/1lSsa9wvdu8'},
-  {t:'Fading Lanterns',        u:'https://youtu.be/PlV9inNIprA'},
-  {t:'Mystic Tide',            u:'https://youtu.be/pDD26E5ywa4'},
-  {t:'Space Voyage',           u:'https://youtu.be/FGiftmJW39Q'},
-  {t:'Sunlit Vibes',           u:'https://youtu.be/HIqJy9A-QKA'},
-  {t:'Morning Light',          u:'https://youtu.be/H_NO_NoZ3Go'},
-  {t:'Seaside Awakening',      u:'https://youtu.be/07XOAgYp4rc'},
-  {t:'Sunrise Farewell',       u:'https://youtu.be/iS58_Dq0ZpI'},
-  {t:'Vinyl Memories',         u:'https://youtu.be/Ms-DKGM2VmU'},
-  {t:'Quiet Bloom',            u:'https://youtu.be/NSpciJbZw_M'},
-  {t:'Discord at Dusk',        u:'https://youtu.be/e3dIW6HMRvg'},
-  {t:'Across the Sea',         u:'https://youtu.be/Cb9briJitmU'},
-  {t:'Daydream Transit',       u:'https://youtu.be/rAHyEATbACY'},
-  {t:'Smoke Signals',          u:'https://youtu.be/11HuUofUCxE'},
-  {t:'Neon Reflections',       u:'https://youtu.be/ltBaJma10LI'},
-  {t:'Veil of Sleep',          u:'https://youtu.be/J2ayQYc7Te8'},
-  {t:"River's Edge",           u:'https://youtu.be/Sd7nUH8ErTU'},
-  {t:'Ghost Letters',          u:'https://youtu.be/kA2TJcjEIkg'},
-  {t:'Evening Stroll',         u:'https://youtu.be/uyXZTv5ZfOc'},
-  {t:'Through the Haze',       u:'https://youtu.be/zMQOXqEjAHI'},
-  {t:'Streetlight Shadows',    u:'https://youtu.be/6_kSx5kbI_Q'},
-  {t:'Moonlit Whispers',       u:'https://youtu.be/B-YF1juW0KM'},
-  {t:'Midnight Transit',       u:'https://youtu.be/jkusZ4zw3Hw'},
-  {t:'Velvet Memories',        u:'https://youtu.be/VF3eqFVzGgM'},
-  {t:'Rainfall on Riverstone', u:'https://youtu.be/LzYvWpOJPYA'},
-  {t:'Coastal Dreams',         u:'https://youtu.be/MPrvuJpjnGo'},
-  {t:'Twilight Cassette',      u:'https://youtu.be/nD41FkohL2c'},
-  {t:'Paper Lanterns',         u:'https://youtu.be/kXKuooZxEow'},
+  {t:'Chasing Fireflies',      u:'https://youtu.be/7SXAG51wZmY', i:'glowing fireflies in warm summer night air, cozy porch light, soft grass underfoot'},
+  {t:'Whispering Dreams',      u:'https://youtu.be/17HA6R7sWSg', i:'soft clouds drifting, sleeping figure, gauzy curtains, light through half-closed eyes'},
+  {t:'Starlit Drive',          u:'https://youtu.be/wgYDCkI8wRw', i:'open car window at night, city lights streaming past, highway stars above'},
+  {t:'Lost in Echoes',         u:'https://youtu.be/Mo58n6BUEIw', i:'empty hallway, golden light through dusty air, sound reverberating into silence'},
+  {t:'Neon Reverie',           u:'https://youtu.be/-rDKmaB7JpI', i:'rain-slicked neon streets late at night, reflections on wet pavement, solitary figure'},
+  {t:'Past Present Forever',   u:'https://youtu.be/6xl20SVvCtM', i:'overlapping timelines, old photographs, warm amber light, two hands reaching'},
+  {t:'Sunkissed Groove',       u:'https://youtu.be/1lSsa9wvdu8', i:'golden afternoon rooftop, swaying plants, sunlit dust motes, warm skin and breeze'},
+  {t:'Fading Lanterns',        u:'https://youtu.be/PlV9inNIprA', i:'paper lanterns drifting skyward over still water, soft river glow, twilight haze'},
+  {t:'Mystic Tide',            u:'https://youtu.be/pDD26E5ywa4', i:'ocean depths, glowing jellyfish, bioluminescent water, mermaid silhouette at dusk'},
+  {t:'Space Voyage',           u:'https://youtu.be/FGiftmJW39Q', i:'drifting weightless through stars, slow nebula colors, vast quiet of deep space'},
+  {t:'Sunlit Vibes',           u:'https://youtu.be/HIqJy9A-QKA', i:'dandelion field in full bloom, golden afternoon sun, wind through tall grass, bare feet'},
+  {t:'Morning Light',          u:'https://youtu.be/H_NO_NoZ3Go', i:'soft dawn through linen curtains, coffee steam rising, quiet kitchen, first light'},
+  {t:'Seaside Awakening',      u:'https://youtu.be/07XOAgYp4rc', i:'first light touching ocean, tide coming in gently, bare feet on cool sand, horizon glowing'},
+  {t:'Sunrise Farewell',       u:'https://youtu.be/iS58_Dq0ZpI', i:'last dark before pink horizon, someone walking slowly into morning, long shadows fading'},
+  {t:'Vinyl Memories',         u:'https://youtu.be/Ms-DKGM2VmU', i:'old record player spinning, dust motes in lamplight, faded black-and-white photographs'},
+  {t:'Quiet Bloom',            u:'https://youtu.be/NSpciJbZw_M', i:'single flower opening at dawn, morning dew on petals, everything green and unhurried'},
+  {t:'Discord at Dusk',        u:'https://youtu.be/e3dIW6HMRvg', i:'city skyline at golden hour, tension held inside beauty, the moment before dark'},
+  {t:'Across the Sea',         u:'https://youtu.be/Cb9briJitmU', i:'vast ocean, small boat on still water, distant shore glowing warm, endless blue'},
+  {t:'Daydream Transit',       u:'https://youtu.be/rAHyEATbACY', i:'bus window in rain, city blurring past, head against glass, thoughts drifting nowhere'},
+  {t:'Smoke Signals',          u:'https://youtu.be/11HuUofUCxE', i:'campfire smoke rising through pine trees, autumn night sky, sparks like small stars'},
+  {t:'Neon Reflections',       u:'https://youtu.be/ltBaJma10LI', i:'neon bar signs reflected in rain puddles, empty city blocks, late-night wandering'},
+  {t:'Veil of Sleep',          u:'https://youtu.be/J2ayQYc7Te8', i:'gauzy curtains in moonlight, figure drifting into sleep, shadows soft and slow'},
+  {t:"River's Edge",           u:'https://youtu.be/Sd7nUH8ErTU', i:'mossy riverbank, smooth wet stones, dragonflies hovering, late afternoon gold on water'},
+  {t:'Ghost Letters',          u:'https://youtu.be/kA2TJcjEIkg', i:'handwritten letters by candlelight, ink fading on old paper, unsent words, dust and longing'},
+  {t:'Evening Stroll',         u:'https://youtu.be/uyXZTv5ZfOc', i:'lamplit sidewalk in autumn, fallen leaves, hands in coat pockets, soft breath visible'},
+  {t:'Through the Haze',       u:'https://youtu.be/zMQOXqEjAHI', i:'foggy morning walk, shapes barely visible, diffuse soft light, the world muffled and kind'},
+  {t:'Streetlight Shadows',    u:'https://youtu.be/6_kSx5kbI_Q', i:'lone streetlight casting long shadows, empty intersection at 2am, quiet city breathing'},
+  {t:'Moonlit Whispers',       u:'https://youtu.be/B-YF1juW0KM', i:'full moon over still water, silver light through trees, hushed forest, secrets held gently'},
+  {t:'Midnight Transit',       u:'https://youtu.be/jkusZ4zw3Hw', i:'empty subway car late at night, city lights blurring past windows, solitary late commute'},
+  {t:'Velvet Memories',        u:'https://youtu.be/VF3eqFVzGgM', i:'plush textures, faded color photographs in warm lamplight, a corner of a room and its quiet'},
+  {t:'Rainfall on Riverstone', u:'https://youtu.be/LzYvWpOJPYA', i:'rain pocking a gray river surface, smooth wet stones, the smell of earth, sky and water merging'},
+  {t:'Coastal Dreams',         u:'https://youtu.be/MPrvuJpjnGo', i:'cliff edge overlooking ocean, sea grass bending, hazy blue horizon, salt air and longing'},
+  {t:'Twilight Cassette',      u:'https://youtu.be/nD41FkohL2c', i:'old cassette tape rewinding, warm 80s bedroom light, nostalgia thick as dust, someone young'},
+  {t:'Paper Lanterns',         u:'https://youtu.be/kXKuooZxEow', i:'paper lanterns floating skyward, cherry blossoms falling, soft night glow, wishes released'},
 ];
 
 const PROPS = [
@@ -860,10 +881,13 @@ Return ONLY valid JSON - no markdown, no preamble:
     {"board": "the lofi hideout", "title": "", "description": "", "tags": ""}
   ],
   "youtube_description": {
-    "body": "hey friend... 2-4 sentences in remy voice themed to featured song vibe",
-    "song_line": "${song.t} - ${song.u}",
-    "property_line": "${dp}",
-    "hashtags": "#introvert #lofimusic #quietsouls #remydova #lofiaesthetic #slowliving"
+    "youtube_title": "under 70 chars — searchable keyword + emotional hook — one emoji ok — lowercase except proper nouns — references the song's specific visual world",
+    "hook": "6-8 words imperative scroll-stopping opener — no period",
+    "body": "2-3 sentences warm permission-giving Remy voice themed specifically to this song's visual world (${song.i}). hey-friend energy.",
+    "closer": "one gentle human truth — one sentence — lowercase",
+    "song_line": "✨ [active verb phrase specific to this song's visual world] to ${song.t}: ${song.u}",
+    "property_line": "📱 [carry/find/visit phrase appropriate for ${descProp.l}]: ${descProp.u}",
+    "hashtags": "3-4 song-specific tags that match the visual world + #remydova #quietsouls #lofimusic #softlife #slowliving"
   }
 }`;
 }
@@ -1067,16 +1091,36 @@ function renderPins(pins) {
 
 // --- YouTube ---
 function renderYoutube(yt, song, descProp) {
+  // title bar
+  const titleBar = document.getElementById('yt-title-bar');
+  const titleText = document.getElementById('yt-title-text');
+  if (yt.youtube_title) {
+    titleText.textContent = yt.youtube_title;
+    titleBar.style.display = 'flex';
+    document.getElementById('copy-yt-title').onclick = () =>
+      copyText(yt.youtube_title, 'copy-yt-title');
+  }
+
+  // description
   document.getElementById('yt-preview').innerHTML = `
+    <div class="yt-hook">${esc(yt.hook)}</div>
     <div class="yt-body">${esc(yt.body)}</div>
-    <div class="yt-song">♪ ${esc(yt.song_line)}</div>
+    <div class="yt-closer">${esc(yt.closer)}</div>
+    <div class="yt-song">${esc(yt.song_line)}</div>
     <div class="yt-property">${esc(yt.property_line)}</div>
     <div class="yt-hashtags">${esc(yt.hashtags)}</div>
   `;
 
   document.getElementById('copy-yt').onclick = () => {
-    const txt = `${yt.body}\n\n♪ ${yt.song_line}\n\n${yt.property_line}\n\n${yt.hashtags}`;
-    copyText(txt, 'copy-yt');
+    const parts = [
+      yt.hook, '',
+      yt.body, '',
+      yt.closer, '',
+      yt.song_line,
+      yt.property_line, '',
+      yt.hashtags,
+    ];
+    copyText(parts.join('\n'), 'copy-yt');
   };
 }
 
@@ -1100,10 +1144,9 @@ function renderChecklist(issue, song) {
     {
       key: 'wednesday', label: 'wednesday',
       items: [
-        `build video in freepik spaces — "${song.t}"`,
+        `build video in freepik spaces — "${song.t}" using video cards above`,
         'post to youtube shorts',
-        'post to instagram reels',
-        'post to tiktok',
+        'paste youtube description from above',
       ],
     },
     {
@@ -1267,10 +1310,13 @@ function makeFallback(issue, song, closer, descProp) {
       {board:'the lofi hideout', title:`${song.t} - new lofi music`, description:`quiet and warm. for the people who prefer the corner of the party - or skipping it entirely.`, tags:`#lofi #lofimusic #introvert #newmusic`},
     ],
     youtube_description: {
-      body: `hey friend. this one was made late on a tuesday, miso asleep somewhere behind me, the french press gone cold. it is for the quiet part of you. i hope it fits.`,
-      song_line: `${song.t} - ${song.u}`,
-      property_line: `${descProp.e} ${descProp.l} - ${descProp.u}`,
-      hashtags: `#introvert #lofimusic #quietsouls #remydova #lofiaesthetic #slowliving`,
+      youtube_title: `lofi for tired souls who just need a moment 🌙`,
+      hook: `press play and let go of today`,
+      body: `hey friend. this one was made late on a tuesday, miso asleep somewhere behind me, the french press gone cold. it is for the quiet part of you - the part that just needs somewhere soft to land.`,
+      closer: `you don't have to earn your rest.`,
+      song_line: `✨ drift into ${song.t}: ${song.u}`,
+      property_line: `📱 find more quiet here: ${descProp.u}`,
+      hashtags: `#lofistudy #quietnight #lofibeats #introvertlife #remydova #quietsouls #lofimusic #softlife #slowliving`,
     },
   };
 }
