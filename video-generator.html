@@ -343,7 +343,7 @@ var songs=[
 
 var descProperties=[
   '🌙 miso floats — remydova.github.io/remy-game/miso-floats.html',
-  '🎹 spotify — search remy dova',
+  '🎹 find me on spotify · remy dova',
   '📓 quiet notes — remydova.substack.com',
   '✦ remy\'s world — remydova.github.io/remy-dova-world',
   '🎵 youtube — youtube.com/@remydova',
@@ -352,7 +352,7 @@ var descProperties=[
 
 var closerProperties=[
   '🌙 float with miso - remydova.github.io/remy-game/miso-floats.html',
-  '🎹 listen on spotify - search remy dova',
+  '🎹 find me on spotify · remy dova',
   '📓 read quiet notes - remydova.substack.com',
   '✦ explore remy\'s world - remydova.github.io/remy-dova-world',
   '🎵 watch on youtube - youtube.com/@remydova',
@@ -495,7 +495,7 @@ var captcutGuides={
 
 var typeConfigs={
   affirmation:{label:'affirmation',cards:4,prompt:'Write a gentle affirmation video for introverts. Warm, lowercase, "it\'s okay to be you" energy. Remy Dova style. Write exactly 3 content cards — the closing card is provided in the template.'},
-  tip:{label:'introvert tip',cards:5,prompt:'Write a specific practical introvert life tip video. One tip broken into steps. Lowercase, warm. Write exactly 4 content cards — the closing card is provided in the template.'},
+  tip:{label:'introvert tip',cards:4,prompt:'Write a specific practical introvert life tip video. One tip broken into steps. Lowercase, warm. Write exactly 3 content cards — the closing card is provided in the template.'},
   remy:{label:'remy moment',cards:4,prompt:'Write a third-person atmospheric scene from Remy Dova\'s world — her desk, late night music making, cat Miso nearby. Poetic, lowercase. Write exactly 3 content cards — the closing card is provided in the template.'},
   quote:{label:'mood quote',cards:2,prompt:'Write one powerful poetic quote for introverts. Lowercase, shareable. Write exactly 1 content card — the closing card is provided in the template.'}
 };
@@ -533,6 +533,7 @@ async function generate(){
     +'Featured song: "'+song.title+'" — visual vibe: '+song.vibe+'.\n\n'
     +'STRICT FORMATTING RULES — follow exactly:\n'
     +'- hook: maximum 6 words, lowercase, NO period at the end\n'
+    +'- body cards: maximum 3 (hook + 3 cards + closer = 5 total at 2 seconds each = 10 seconds)\n'
     +'- each card: maximum 5-7 words, lowercase, NO periods anywhere, use only regular dash - never em dash\n'
     +'- last card must be exactly: '+closer+'\n\n'
     +'Return ONLY valid JSON (no markdown, no backticks):\n'

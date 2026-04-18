@@ -603,7 +603,7 @@ const SONGS = [
 
 const PROPS = [
   {e:'🌙', l:'miso floats',    u:'remydova.github.io/remy-game/miso-floats.html'},
-  {e:'🎹', l:'spotify',        u:'search remy dova'},
+  {e:'🎹', l:'spotify',        u:'find me on spotify · remy dova'},
   {e:'📓', l:'quiet notes',    u:'remydova.substack.com'},
   {e:'✦',  l:"remy's world",   u:'remydova.github.io/remy-dova-world'},
   {e:'🎵', l:'youtube',        u:'youtube.com/@remydova'},
@@ -654,7 +654,9 @@ NEWSLETTER VOICE RULES:
 
 VIDEO CARD RULES:
 - hook: max 6 words, no period, scroll-stopping
-- cards: max 5-7 words each, no periods, hyphens ok not em dashes
+- body cards: max 3 per video (not counting hook or closer) — total is hook + 3 cards + closer = 5 cards at 2 seconds each = 10 seconds
+- each card: max 5-7 words, no periods, hyphens ok not em dashes
+- last card always = current property from closer index (enforced in JS)
 - title: compelling under 60 chars, lowercase, no period`;
 
 // ================================================================
@@ -870,7 +872,7 @@ Return ONLY valid JSON - no markdown, no preamble:
   },
   "videos": {
     "affirmation": {"title": "", "hook": "", "cards": ["","","",""], "caption_en": ""},
-    "tip": {"title": "", "hook": "", "cards": ["","","","",""], "caption_en": ""},
+    "tip": {"title": "", "hook": "", "cards": ["","","",""], "caption_en": ""},
     "remy_moment": {"title": "", "hook": "", "cards": ["","","",""], "caption_en": ""},
     "quote_video": {"title": "", "hook": "", "cards": ["",""], "caption_en": ""}
   },
@@ -1287,7 +1289,7 @@ function makeFallback(issue, song, closer, descProp) {
       tip: {
         title: `the 5-minute reset for overwhelmed introverts`,
         hook: 'when everything feels too loud',
-        cards: ['close the tabs', 'make one quiet drink', 'sit without your phone', 'two minutes - just breathe', cTxt],
+        cards: ['close the tabs', 'make one quiet drink', 'sit without your phone', cTxt],
         caption_en: `a small ritual for hard days. #introvert #quietlife #lofi #mentalhealth`,
       },
       remy_moment: {
