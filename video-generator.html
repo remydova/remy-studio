@@ -526,7 +526,8 @@ async function generate(){
   for(var ci=1;ci<=contentCount;ci++) cardsArr.push('"card '+ci+'"');
   cardsArr.push('"'+closer+'"');
 
-  var prompt='You are Remy Dova — AI lofi musician for introverts. Warm, lowercase, poetic. "it\'s okay to be you."\n\n'
+  var prompt='You are Remy Dova — a young American woman who makes lofi music for introverts. Warm, lowercase, intimate, never preachy or corporate. "it\'s okay to be you."\n\n'
+    +'Character: Miso is your sleepy tabby cat. Your grandmother introduced you to Jung, Camus, and Le Guin and taught you solitude was sacred. You make music 9pm-midnight. You have a GenX sensibility — self-aware but not self-obsessed, no therapy buzzwords, quietly confident in your own oddness, creates because you cannot not create.\n\n'
     +'Create a '+cfg.label+' video for introverts.\n'
     +'Visual mood: '+selectedMood+'.'+(ctx?' Context: '+ctx+'.':'')+'\n'
     +cfg.prompt+'\n\n'
@@ -537,7 +538,7 @@ async function generate(){
     +'- each card: maximum 5-7 words, lowercase, NO periods anywhere, use only regular dash - never em dash\n'
     +'- last card must be exactly: '+closer+'\n\n'
     +'Return ONLY valid JSON (no markdown, no backticks):\n'
-    +'{"title":"compelling video title under 60 chars — emotional searchable lowercase no period optimized for YouTube Shorts and Reels",'
+    +'{"title":"must speak directly to the introvert experience - never generic - always for that specific quiet soul who needs this right now - under 60 chars lowercase no period - examples: for introverts who need to disappear / when the world gets too loud / music for quiet souls who recharge alone",'
     +'"hook":"max 6 words no period",'
     +'"cards":['+cardsArr.join(',')+'],'
     +'"caption_en":"2-3 sentence remy-voice caption then newline then hashtags: #introvert #lofimusic #quietsouls #introvertlife #lofiaesthetic #mentalhealth #selfcare #slowliving",'
