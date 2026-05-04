@@ -597,9 +597,9 @@ textarea::placeholder{color:var(--text-muted);font-style:italic;}
 // CONSTANTS
 // ================================================================
 
-const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN_HERE';
 const GITHUB_REPO = 'remydova/remy-studio';
 const GITHUB_FILE = 'weekly-content.json';
+let _ghToken = null;
 
 const PROXY = 'https://remy-claude-proxy.gkstutler.workers.dev';
 const MODEL = 'claude-sonnet-4-20250514';
@@ -1290,6 +1290,12 @@ function resetChecklist() {
 async function handleSaveToGithub() {
   if (!currentRender) return;
 
+  if (!_ghToken) {
+    const entered = prompt('enter your github personal access token:');
+    if (!entered || !entered.trim()) return;
+    _ghToken = entered.trim();
+  }
+
   const btn = document.getElementById('save-gh-btn');
   btn.disabled = true;
   btn.textContent = '✦ saving...';
@@ -1351,7 +1357,7 @@ async function handleSaveToGithub() {
     let sha = null;
     const checkRes = await fetch(
       `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
-      { headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json' } }
+      { headers: { 'Authorization': `Bearer ${_ghToken}`, 'Accept': 'application/vnd.github+json' } }
     );
     if (checkRes.ok) {
       const existing = await checkRes.json();
@@ -1370,7 +1376,7 @@ async function handleSaveToGithub() {
       {
         method: 'PUT',
         headers: {
-          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Authorization': `Bearer ${_ghToken}`,
           'Accept': 'application/vnd.github+json',
           'Content-Type': 'application/json',
         },
