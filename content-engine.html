@@ -399,6 +399,37 @@ textarea::placeholder{color:var(--text-muted);font-style:italic;}
 /* divider */
 .divider{height:1px;background:var(--border);margin:1.5rem 0;}
 
+/* save to github button */
+.save-gh-btn{
+  width:100%;padding:1rem 2rem;
+  background:linear-gradient(135deg,var(--amber),rgba(212,149,106,0.85));
+  border:1px solid var(--amber);border-radius:12px;
+  color:#0c0c18;font-family:'Playfair Display',serif;
+  font-size:1.1rem;letter-spacing:0.02em;
+  cursor:none;transition:all 0.3s;
+  display:flex;align-items:center;justify-content:center;gap:0.5rem;
+  font-weight:600;
+}
+.save-gh-btn:hover:not(:disabled){
+  background:linear-gradient(135deg,rgba(212,149,106,1),rgba(212,149,106,0.95));
+  transform:translateY(-1px);box-shadow:0 4px 20px rgba(212,149,106,0.3);
+}
+.save-gh-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+/* toast */
+.toast{
+  position:fixed;bottom:2rem;left:50%;
+  transform:translateX(-50%) translateY(120px);
+  background:var(--surf2);border:1px solid var(--tborder);
+  border-radius:10px;padding:0.8rem 1.75rem;
+  color:var(--teal);font-family:'Caveat',cursive;font-size:1.05rem;
+  z-index:10000;transition:transform 0.4s ease,opacity 0.4s ease;
+  opacity:0;pointer-events:none;white-space:nowrap;
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+.toast.error{color:#e88b7a;border-color:rgba(232,139,122,0.4);}
+
 /* responsive */
 @media(max-width:640px){
   .status-bar{grid-template-columns:1fr 1fr;}
@@ -414,6 +445,7 @@ textarea::placeholder{color:var(--text-muted);font-style:italic;}
 <div id="stars-container"></div>
 <div id="petals-container"></div>
 <div id="cursor">🌙</div>
+<div class="toast" id="toast"></div>
 
 <div class="app">
 
@@ -552,6 +584,10 @@ textarea::placeholder{color:var(--text-muted);font-style:italic;}
       <div id="checklist-body"></div>
     </div>
 
+    <div style="margin-top:1.25rem;">
+      <button class="save-gh-btn" id="save-gh-btn">✦ save to github for hyperagent</button>
+    </div>
+
   </div><!-- /output-wrap -->
 
 </div><!-- /app -->
@@ -560,6 +596,10 @@ textarea::placeholder{color:var(--text-muted);font-style:italic;}
 // ================================================================
 // CONSTANTS
 // ================================================================
+
+const GITHUB_TOKEN = 'YOUR_GITHUB_TOKEN_HERE';
+const GITHUB_REPO = 'remydova/remy-studio';
+const GITHUB_FILE = 'weekly-content.json';
 
 const PROXY = 'https://remy-claude-proxy.gkstutler.workers.dev';
 const MODEL = 'claude-sonnet-4-20250514';
@@ -786,6 +826,7 @@ function setupEvents() {
   document.getElementById('gen-btn').addEventListener('click', handleGenerate);
   document.getElementById('publish-btn').addEventListener('click', handlePublish);
   document.getElementById('reset-btn').addEventListener('click', resetChecklist);
+  document.getElementById('save-gh-btn').addEventListener('click', handleSaveToGithub);
 
   document.getElementById('issue-num').addEventListener('change', e => {
     setState({issue: parseInt(e.target.value) || 1});
@@ -1240,6 +1281,123 @@ function resetChecklist() {
   document.querySelectorAll('#checklist-body input[type="checkbox"]').forEach(cb => {
     cb.checked = false;
   });
+}
+
+// ================================================================
+// GITHUB SAVE
+// ================================================================
+
+async function handleSaveToGithub() {
+  if (!currentRender) return;
+
+  const btn = document.getElementById('save-gh-btn');
+  btn.disabled = true;
+  btn.textContent = '✦ saving...';
+
+  const { data, song, closer, descProp, issue } = currentRender;
+  const mood = document.querySelector('.mood-chip.on')?.dataset.m || 'gentle';
+  const closerTxt = `${closer.e} ${closer.l}`;
+
+  const buildVideo = key => {
+    const v = data.videos[key];
+    if (!v) return null;
+    return {
+      title: v.title,
+      hook: v.hook,
+      cards: (v.cards || []).map((c, i) => i === v.cards.length - 1 ? closerTxt : c),
+      caption_en: v.caption_en,
+    };
+  };
+
+  const payload = {
+    issue_number: issue,
+    generated_date: new Date().toISOString(),
+    mood,
+    featured_song: { title: song.t, youtube_url: song.u },
+    newsletter: {
+      subject:           data.newsletter.subject,
+      title:             data.newsletter.title,
+      opening:           data.newsletter.opening,
+      section1_heading:  data.newsletter.section1_heading,
+      section1_body:     data.newsletter.section1_body,
+      quote:             data.newsletter.quote,
+      section2_heading:  data.newsletter.section2_heading,
+      section2_body:     data.newsletter.section2_body,
+      prompt:            data.newsletter.prompt,
+      closing:           data.newsletter.closing,
+      ps:                data.newsletter.ps,
+      note_wednesday:    data.newsletter.note_wednesday,
+      note_friday:       data.newsletter.note_friday,
+    },
+    videos: {
+      affirmation:  buildVideo('affirmation'),
+      tip:          buildVideo('tip'),
+      remy_moment:  buildVideo('remy_moment'),
+      quote_video:  buildVideo('quote_video'),
+    },
+    pins: (data.pins || []).map(p => ({
+      board: p.board, title: p.title, description: p.description, tags: p.tags,
+    })),
+    youtube_description: {
+      title:         data.youtube_description.youtube_title,
+      body:          data.youtube_description.body,
+      song_line:     data.youtube_description.song_line,
+      property_line: data.youtube_description.property_line,
+      hashtags:      data.youtube_description.hashtags,
+    },
+  };
+
+  try {
+    let sha = null;
+    const checkRes = await fetch(
+      `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+      { headers: { 'Authorization': `Bearer ${GITHUB_TOKEN}`, 'Accept': 'application/vnd.github+json' } }
+    );
+    if (checkRes.ok) {
+      const existing = await checkRes.json();
+      sha = existing.sha;
+    }
+
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(payload, null, 2))));
+    const putBody = {
+      message: `update weekly-content.json — issue #${issue}`,
+      content,
+      ...(sha ? { sha } : {}),
+    };
+
+    const putRes = await fetch(
+      `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${GITHUB_TOKEN}`,
+          'Accept': 'application/vnd.github+json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(putBody),
+      }
+    );
+
+    if (!putRes.ok) {
+      const err = await putRes.json();
+      throw new Error(err.message || `HTTP ${putRes.status}`);
+    }
+
+    showToast('✦ saved to github — hyperagent can read this week\'s content');
+  } catch(err) {
+    showToast(`github save failed: ${err.message}`, true);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✦ save to github for hyperagent';
+  }
+}
+
+function showToast(msg, isError = false) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.toggle('error', isError);
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4500);
 }
 
 // ================================================================
