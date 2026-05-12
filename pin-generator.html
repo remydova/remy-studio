@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>pin generator · remy studio</title>
+<meta name="theme-color" content="#0c0c18">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="pin gen">
+<link rel="manifest" href="pin-generator-manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Lora:ital,wght@0,400;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c18;--surf:#13131f;--surf2:#1a1a2e;--amber:#d4956a;--adim:rgba(212,149,106,0.12);--aborder:rgba(212,149,106,0.28);--teal:#7fb5a0;--tdim:rgba(127,181,160,0.12);--lav:#9b8bb4;--text:#e8ddd0;--tdim2:rgba(232,221,208,0.55);--tmuted:rgba(232,221,208,0.28);--border:rgba(232,221,208,0.08);}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Lora',serif;min-height:100vh;overflow-x:hidden;cursor:none;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:0.35;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");}
+@keyframes twinkle{from{opacity:0.1;transform:scale(0.8);}to{opacity:0.9;transform:scale(1.2);}}
+@keyframes petalFall{0%{transform:translateY(-20px) rotate(0deg);opacity:0;}10%{opacity:0.6;}90%{opacity:0.2;}100%{transform:translateY(105vh) rotate(360deg);opacity:0;}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:none;}}
+input[type="file"]{display:none;}
+
+#rain-canvas{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0.35;}
+#stars-container{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+#petals-container{position:fixed;inset:0;pointer-events:none;z-index:2;overflow:hidden;}
+
+nav{position:sticky;top:0;z-index:500;background:rgba(12,12,24,0.9);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);height:56px;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Caveat',cursive;font-size:1.3rem;color:var(--amber);text-decoration:none;}
+.nav-links{display:flex;gap:0.25rem;list-style:none;}
+.nav-links a{font-family:'Caveat',cursive;font-size:1rem;color:var(--tdim2);text-decoration:none;padding:0.3rem 0.7rem;border-radius:20px;transition:all 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--amber);background:var(--adim);}
+.nav-right{font-family:'Caveat',cursive;font-size:0.85rem;color:var(--teal);text-decoration:none;border:1px solid rgba(127,181,160,0.3);padding:0.25rem 0.8rem;border-radius:20px;transition:all 0.2s;}
+.nav-right:hover{background:var(--tdim);}
+
+.page-header{text-align:center;padding:3rem 2rem 1.5rem;position:relative;z-index:10;animation:fadeUp 0.6s 0.1s both;}
+.page-eyebrow{font-family:'Caveat',cursive;font-size:0.85rem;color:var(--amber);letter-spacing:0.15em;text-transform:uppercase;opacity:0.75;margin-bottom:0.5rem;}
+.page-title{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:400;margin-bottom:0.3rem;}
+.page-title em{color:var(--amber);font-style:italic;}
+.page-sub{font-size:0.85rem;color:var(--tdim2);font-style:italic;max-width:520px;margin:0 auto;}
+
+.main{max-width:1100px;margin:0 auto;padding:0 1.5rem 6rem;position:relative;z-index:10;}
+.pin-layout{display:grid;grid-template-columns:1fr 390px;gap:2rem;align-items:start;}
+
+.controls-col{display:flex;flex-direction:column;gap:0.85rem;animation:fadeUp 0.6s 0.15s both;}
+.card{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:1.1rem 1.25rem;}
+.lbl{font-family:'Caveat',cursive;font-size:0.78rem;color:var(--amber);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.65rem;display:block;}
+.chip-row{display:flex;flex-wrap:wrap;gap:0.4rem;}
+.chip{font-family:'Caveat',cursive;font-size:0.9rem;padding:0.28rem 0.85rem;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--tdim2);cursor:none;transition:all 0.18s;}
+.chip:hover{border-color:var(--aborder);color:var(--amber);}
+.chip.on{border-color:var(--amber);background:var(--adim);color:var(--amber);}
+
+.upload-zone{border:1px dashed rgba(212,149,106,0.3) !important;cursor:none;transition:all 0.2s;min-height:116px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.4rem;position:relative;}
+.upload-zone.drag-over{border-color:var(--amber) !important;background:var(--adim);}
+.upload-zone.has-image{min-height:auto;padding:0.85rem 1.25rem;}
+.upload-placeholder{text-align:center;pointer-events:none;}
+.upload-icon{font-size:1.6rem;margin-bottom:0.3rem;}
+.upload-hint{font-family:'Caveat',cursive;font-size:0.92rem;color:var(--amber);}
+.upload-sub{font-family:'Caveat',cursive;font-size:0.75rem;color:var(--tmuted);margin-top:0.15rem;}
+.img-preview-row{display:flex;align-items:center;gap:0.75rem;width:100%;}
+.img-thumb{width:50px;height:50px;border-radius:8px;object-fit:cover;border:1px solid var(--border);flex-shrink:0;}
+.img-info{flex:1;min-width:0;}
+.img-name{font-family:'Caveat',cursive;font-size:0.85rem;color:var(--text);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.img-clear{font-family:'Caveat',cursive;font-size:0.78rem;color:var(--tmuted);background:transparent;border:1px solid var(--border);border-radius:20px;padding:0.2rem 0.65rem;cursor:none;transition:all 0.2s;flex-shrink:0;}
+.img-clear:hover{border-color:rgba(155,139,180,0.4);color:var(--lav);}
+
+.txt-input{width:100%;background:var(--surf2);border:1px solid var(--border);border-radius:10px;padding:0.6rem 0.85rem;color:var(--text);font-family:'Lora',serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;text-transform:lowercase;}
+.txt-input::placeholder{color:var(--tmuted);font-style:italic;text-transform:none;}
+.txt-input:focus{border-color:var(--aborder);}
+
+.slider-row{display:flex;align-items:center;gap:0.65rem;margin-top:0.5rem;}
+.slider-label{font-family:'Caveat',cursive;font-size:0.75rem;color:var(--tmuted);white-space:nowrap;}
+.slider{flex:1;-webkit-appearance:none;appearance:none;height:3px;background:var(--surf2);border-radius:3px;outline:none;cursor:none;}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--amber);cursor:none;transition:transform 0.15s;border:2px solid rgba(212,149,106,0.4);}
+.slider::-webkit-slider-thumb:hover{transform:scale(1.2);}
+.slider::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--amber);border:2px solid rgba(212,149,106,0.4);cursor:none;}
+.slider-val{font-family:'Caveat',cursive;font-size:0.85rem;color:var(--amber);min-width:2.4rem;text-align:right;}
+
+.swatch-row{display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;}
+.swatch{width:28px;height:28px;border-radius:50%;cursor:none;border:2px solid transparent;transition:all 0.15s;flex-shrink:0;}
+.swatch.on{border-color:rgba(255,255,255,0.8);transform:scale(1.18);}
+.swatch:hover{transform:scale(1.1);}
+
+.preview-col{position:sticky;top:72px;display:flex;flex-direction:column;align-items:center;gap:0.85rem;animation:fadeUp 0.6s 0.2s both;}
+.canvas-wrap{width:100%;aspect-ratio:2/3;border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--surf2);box-shadow:0 0 40px rgba(0,0,0,0.4);}
+#pin-canvas{width:100%;height:100%;display:block;}
+
+.dl-btn{width:100%;background:var(--amber);color:var(--bg);border:none;border-radius:50px;padding:0.9rem 2rem;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;cursor:none;transition:all 0.25s;box-shadow:0 0 20px rgba(212,149,106,0.25);}
+.dl-btn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(212,149,106,0.4);}
+.pin-hint{font-family:'Caveat',cursive;font-size:0.75rem;color:var(--tmuted);text-align:center;}
+
+.bg-section{transition:opacity 0.25s;}
+.bg-section.hidden{opacity:0.28;pointer-events:none;}
+
+footer{text-align:center;padding:2rem 1rem 3rem;border-top:1px solid var(--border);position:relative;z-index:10;}
+footer p{font-family:'Caveat',cursive;font-size:0.85rem;color:var(--tmuted);}
+footer a{color:var(--teal);text-decoration:none;}
+
+@media(max-width:800px){
+  .pin-layout{grid-template-columns:1fr;}
+  .preview-col{position:static;order:-1;}
+  #pin-canvas{max-width:280px;display:block;margin:0 auto;}
+  nav{padding:0 1rem;}
+  .nav-links a{font-size:0.85rem;padding:0.25rem 0.45rem;}
+  .nav-right{display:none;}
+}
+</style>
+</head>
+<body>
+<canvas id="rain-canvas"></canvas>
+<div id="stars-container"></div>
+<div id="petals-container"></div>
+
+<nav>
+  <a href="newsletter-generator.html" class="nav-logo">🌙 remy studio</a>
+  <ul class="nav-links">
+    <li><a href="newsletter-generator.html">quiet notes</a></li>
+    <li><a href="video-generator.html">video gen</a></li>
+    <li><a href="pin-generator.html" class="active">pin gen</a></li>
+  </ul>
+  <a href="https://pinterest.com/remydova" target="_blank" class="nav-right">open pinterest ↗</a>
+</nav>
+
+<div class="page-header">
+  <div class="page-eyebrow">✦ remy studio</div>
+  <h1 class="page-title">the <em>pin generator</em></h1>
+  <p class="page-sub">design pinterest pins in remy's aesthetic — upload a photo, set your text, download the pin</p>
+</div>
+
+<div class="main">
+  <div class="pin-layout">
+
+    <div class="controls-col">
+
+      <!-- IMAGE UPLOAD -->
+      <div class="card upload-zone" id="upload-zone">
+        <input type="file" id="img-input" accept="image/*">
+        <div class="upload-placeholder" id="upload-placeholder">
+          <div class="upload-icon">📌</div>
+          <div class="upload-hint">click or drag a photo here</div>
+          <div class="upload-sub">jpg · png · webp · heic</div>
+        </div>
+        <div class="img-preview-row" id="img-preview-row" style="display:none">
+          <img class="img-thumb" id="img-thumb" alt="">
+          <div class="img-info"><span class="img-name" id="img-name"></span></div>
+          <button class="img-clear" id="img-clear">remove</button>
+        </div>
+      </div>
+
+      <!-- BOARD -->
+      <div class="card">
+        <span class="lbl">✦ pinterest board</span>
+        <div class="chip-row" id="board-chips">
+          <button class="chip on" data-val="the lofi hideout">the lofi hideout</button>
+          <button class="chip" data-val="ink and oxygen">ink and oxygen</button>
+          <button class="chip" data-val="walking as practice">walking as practice</button>
+        </div>
+      </div>
+
+      <!-- TITLE + SIZE -->
+      <div class="card">
+        <span class="lbl">✦ pin title</span>
+        <input type="text" class="txt-input" id="title-input" placeholder="your pin title..." maxlength="80">
+        <div class="slider-row">
+          <span class="slider-label">size</span>
+          <input type="range" class="slider" id="title-size" min="38" max="120" value="78">
+          <span class="slider-val" id="title-size-val">78</span>
+        </div>
+      </div>
+
+      <!-- TEXT POSITION -->
+      <div class="card">
+        <span class="lbl">✦ text position</span>
+        <div class="chip-row" id="position-chips">
+          <button class="chip" data-val="top">top</button>
+          <button class="chip on" data-val="lower third">lower third</button>
+          <button class="chip" data-val="bottom">bottom</button>
+        </div>
+      </div>
+
+      <!-- SUBTITLE + SIGNATURE -->
+      <div class="card">
+        <span class="lbl">✦ subtitle</span>
+        <input type="text" class="txt-input" id="subtitle-input" placeholder="optional subtitle..." maxlength="100" style="margin-bottom:0.75rem;">
+        <span class="lbl">✦ signature</span>
+        <input type="text" class="txt-input" id="signature-input" value="remy dova" maxlength="50">
+      </div>
+
+      <!-- ACCENT COLOR -->
+      <div class="card">
+        <span class="lbl">✦ accent color</span>
+        <div class="swatch-row" id="accent-swatches">
+          <button class="swatch on" data-color="#d4956a" style="background:#d4956a;" title="amber"></button>
+          <button class="swatch" data-color="#7fb5a0" style="background:#7fb5a0;" title="teal"></button>
+          <button class="swatch" data-color="#9b8bb4" style="background:#9b8bb4;" title="lavender"></button>
+          <button class="swatch" data-color="#e8ddd0" style="background:#e8ddd0;" title="cream"></button>
+          <button class="swatch" data-color="#ffffff" style="background:#ffffff;" title="white"></button>
+        </div>
+      </div>
+
+      <!-- OVERLAY DARKNESS -->
+      <div class="card">
+        <span class="lbl">✦ overlay darkness</span>
+        <div class="slider-row">
+          <span class="slider-label">light</span>
+          <input type="range" class="slider" id="overlay-slider" min="0" max="88" value="52">
+          <span class="slider-label">dark</span>
+          <span class="slider-val" id="overlay-val">52%</span>
+        </div>
+      </div>
+
+      <!-- BACKGROUND COLOR (no-image) -->
+      <div class="card bg-section" id="bg-section">
+        <span class="lbl">✦ background color <span style="font-size:0.7rem;opacity:0.55;">(when no photo)</span></span>
+        <div class="swatch-row" id="bg-swatches">
+          <button class="swatch on" data-color="#0c0c18" style="background:#0c0c18;" title="navy"></button>
+          <button class="swatch" data-color="#1a0818" style="background:#1a0818;" title="plum"></button>
+          <button class="swatch" data-color="#091814" style="background:#091814;" title="forest"></button>
+          <button class="swatch" data-color="#080f1a" style="background:#080f1a;" title="slate"></button>
+          <button class="swatch" data-color="#180a12" style="background:#180a12;" title="dusk"></button>
+          <button class="swatch" data-color="#0f0f0f" style="background:#0f0f0f;border:1px solid rgba(255,255,255,0.08);" title="charcoal"></button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PREVIEW COLUMN -->
+    <div class="preview-col">
+      <div class="canvas-wrap">
+        <canvas id="pin-canvas" width="1000" height="1500"></canvas>
+      </div>
+      <button class="dl-btn" id="dl-btn">⬇ download png</button>
+      <p class="pin-hint">exports at 1000 × 1500 · pinterest optimal</p>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>remy studio · <a href="newsletter-generator.html">quiet notes</a> · <a href="video-generator.html">video gen</a> · private tool 🌙</p>
+</footer>
+
+<script>
+// ── Moon cursor ───────────────────────────────────────────────────────────────
+(function(){var c=document.createElement('div');c.textContent='🌙';c.style.cssText='position:fixed;pointer-events:none;z-index:99999;font-size:20px;transform:translate(-50%,-50%);transition:transform 0.08s;filter:drop-shadow(0 0 6px rgba(212,149,106,0.6));top:-40px;left:-40px;';document.body.appendChild(c);document.addEventListener('mousemove',function(e){c.style.left=e.clientX+'px';c.style.top=e.clientY+'px';});document.addEventListener('mousedown',function(){c.style.transform='translate(-50%,-50%) scale(0.75)';});document.addEventListener('mouseup',function(){c.style.transform='translate(-50%,-50%) scale(1)';});})();
+
+// ── Rain ──────────────────────────────────────────────────────────────────────
+(function(){var c=document.getElementById('rain-canvas'),x=c.getContext('2d'),d=[];function r(){c.width=window.innerWidth;c.height=window.innerHeight;}window.addEventListener('resize',r);r();for(var i=0;i<100;i++)d.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,l:Math.random()*15+8,s:Math.random()*2+1.5,o:Math.random()*0.25+0.05});function draw(){x.clearRect(0,0,c.width,c.height);d.forEach(function(p){x.beginPath();x.moveTo(p.x,p.y);x.lineTo(p.x-p.l*0.2,p.y+p.l);x.strokeStyle='rgba(180,200,220,'+p.o+')';x.lineWidth=0.8;x.stroke();p.y+=p.s;if(p.y>c.height){p.y=-p.l;p.x=Math.random()*c.width;}});requestAnimationFrame(draw);}draw();})();
+
+// ── Stars ─────────────────────────────────────────────────────────────────────
+(function(){var s=document.getElementById('stars-container');for(var i=0;i<60;i++){var e=document.createElement('div'),z=Math.random()*2.5+0.5;e.style.cssText='position:absolute;border-radius:50%;background:rgba(232,221,208,0.8);width:'+z+'px;height:'+z+'px;top:'+Math.random()*100+'%;left:'+Math.random()*100+'%;animation:twinkle '+(Math.random()*3+2)+'s ease-in-out '+(Math.random()*4)+'s infinite alternate;';s.appendChild(e);}})();
+
+// ── Petals ────────────────────────────────────────────────────────────────────
+(function(){var p=document.getElementById('petals-container'),c=['✿','❀','✽','❁'];for(var i=0;i<18;i++){var e=document.createElement('div');e.textContent=c[i%4];e.style.cssText='position:absolute;top:-20px;font-size:0.8rem;color:rgba(212,149,106,0.5);left:'+Math.random()*100+'vw;animation:petalFall '+(Math.random()*14+10)+'s '+(Math.random()*12)+'s linear infinite;';p.appendChild(e);}})();
+
+// ── State ─────────────────────────────────────────────────────────────────────
+var state = {
+  img: null,
+  board: 'the lofi hideout',
+  title: '',
+  titleSize: 78,
+  position: 'lower third',
+  subtitle: '',
+  signature: 'remy dova',
+  accent: '#d4956a',
+  overlay: 52,
+  bgColor: '#0c0c18',
+};
+
+// ── Upload ────────────────────────────────────────────────────────────────────
+var uploadZone   = document.getElementById('upload-zone');
+var imgInput     = document.getElementById('img-input');
+var placeholder  = document.getElementById('upload-placeholder');
+var previewRow   = document.getElementById('img-preview-row');
+var imgThumb     = document.getElementById('img-thumb');
+var imgNameEl    = document.getElementById('img-name');
+var bgSection    = document.getElementById('bg-section');
+
+uploadZone.addEventListener('click', function(e) {
+  if (e.target.closest('#img-clear')) return;
+  imgInput.click();
+});
+uploadZone.addEventListener('dragover', function(e) { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', function() { uploadZone.classList.remove('drag-over'); });
+uploadZone.addEventListener('drop', function(e) {
+  e.preventDefault(); uploadZone.classList.remove('drag-over');
+  var f = e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) loadFile(f);
+});
+imgInput.addEventListener('change', function() { if (this.files[0]) loadFile(this.files[0]); });
+
+document.getElementById('img-clear').addEventListener('click', function(e) {
+  e.stopPropagation();
+  state.img = null;
+  imgInput.value = '';
+  placeholder.style.display = '';
+  previewRow.style.display = 'none';
+  uploadZone.classList.remove('has-image');
+  bgSection.classList.remove('hidden');
+  scheduleRender();
+});
+
+function loadFile(file) {
+  var reader = new FileReader();
+  reader.onload = function(ev) {
+    var img = new Image();
+    img.onload = function() {
+      state.img = img;
+      imgThumb.src = ev.target.result;
+      imgNameEl.textContent = file.name.length > 26 ? file.name.slice(0,23) + '...' : file.name;
+      placeholder.style.display = 'none';
+      previewRow.style.display = 'flex';
+      uploadZone.classList.add('has-image');
+      bgSection.classList.add('hidden');
+      scheduleRender();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Chip groups ───────────────────────────────────────────────────────────────
+function chipGroup(id, key) {
+  document.getElementById(id).addEventListener('click', function(e) {
+    var chip = e.target.closest('.chip');
+    if (!chip) return;
+    document.querySelectorAll('#' + id + ' .chip').forEach(function(c) { c.classList.remove('on'); });
+    chip.classList.add('on');
+    state[key] = chip.dataset.val;
+    scheduleRender();
+  });
+}
+chipGroup('board-chips', 'board');
+chipGroup('position-chips', 'position');
+
+// ── Swatch groups ─────────────────────────────────────────────────────────────
+function swatchGroup(id, key) {
+  document.getElementById(id).addEventListener('click', function(e) {
+    var sw = e.target.closest('.swatch');
+    if (!sw) return;
+    document.querySelectorAll('#' + id + ' .swatch').forEach(function(s) { s.classList.remove('on'); });
+    sw.classList.add('on');
+    state[key] = sw.dataset.color;
+    scheduleRender();
+  });
+}
+swatchGroup('accent-swatches', 'accent');
+swatchGroup('bg-swatches', 'bgColor');
+
+// ── Text inputs ───────────────────────────────────────────────────────────────
+['title-input','subtitle-input','signature-input'].forEach(function(id) {
+  var key = id.replace('-input','').replace('-','');
+  if (id === 'title-input') key = 'title';
+  else if (id === 'subtitle-input') key = 'subtitle';
+  else key = 'signature';
+  document.getElementById(id).addEventListener('input', function() {
+    state[key] = this.value;
+    scheduleRender();
+  });
+});
+
+document.getElementById('title-size').addEventListener('input', function() {
+  state.titleSize = parseInt(this.value);
+  document.getElementById('title-size-val').textContent = this.value;
+  scheduleRender();
+});
+document.getElementById('overlay-slider').addEventListener('input', function() {
+  state.overlay = parseInt(this.value);
+  document.getElementById('overlay-val').textContent = this.value + '%';
+  scheduleRender();
+});
+
+// ── Download ──────────────────────────────────────────────────────────────────
+document.getElementById('dl-btn').addEventListener('click', function() {
+  renderPin();
+  var cv = document.getElementById('pin-canvas');
+  var a = document.createElement('a');
+  a.download = 'remy-pin-' + Date.now() + '.png';
+  a.href = cv.toDataURL('image/png');
+  a.click();
+});
+
+// ── Canvas render ─────────────────────────────────────────────────────────────
+var renderTimer = null;
+function scheduleRender() { clearTimeout(renderTimer); renderTimer = setTimeout(renderPin, 80); }
+
+function wrapText(ctx, text, x, y, maxW, lh) {
+  var words = text.split(' ').filter(Boolean);
+  if (!words.length) { ctx.fillText('', x, y); return 0; }
+  var lines = [], line = '';
+  words.forEach(function(w) {
+    var test = line ? line + ' ' + w : w;
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; }
+    else { line = test; }
+  });
+  if (line) lines.push(line);
+  lines.forEach(function(l, i) { ctx.fillText(l, x, y + i * lh); });
+  return lines.length;
+}
+
+function renderPin() {
+  var cv = document.getElementById('pin-canvas');
+  var ctx = cv.getContext('2d');
+  var W = 1000, H = 1500;
+  cv.width = W; cv.height = H;
+
+  // Background
+  if (state.img) {
+    var sc = Math.max(W / state.img.width, H / state.img.height);
+    var dw = state.img.width * sc, dh = state.img.height * sc;
+    ctx.drawImage(state.img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  } else {
+    ctx.fillStyle = state.bgColor;
+    ctx.fillRect(0, 0, W, H);
+    // ambient glow
+    var grd = ctx.createRadialGradient(W * 0.5, H * 0.38, 0, W * 0.5, H * 0.38, W * 0.75);
+    grd.addColorStop(0, 'rgba(212,149,106,0.055)');
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Overlay gradient
+  var alpha = state.overlay / 100;
+  var base = 'rgba(12,12,24,';
+  var gr;
+  if (state.position === 'top') {
+    gr = ctx.createLinearGradient(0, 0, 0, 740);
+    gr.addColorStop(0, base + Math.min(alpha + 0.15, 0.95) + ')');
+    gr.addColorStop(0.75, base + (alpha * 0.3) + ')');
+    gr.addColorStop(1, 'rgba(0,0,0,0)');
+  } else if (state.position === 'lower third') {
+    gr = ctx.createLinearGradient(0, 780, 0, H);
+    gr.addColorStop(0, 'rgba(0,0,0,0)');
+    gr.addColorStop(0.35, base + (alpha * 0.5) + ')');
+    gr.addColorStop(1, base + Math.min(alpha + 0.18, 0.96) + ')');
+  } else {
+    gr = ctx.createLinearGradient(0, 1020, 0, H);
+    gr.addColorStop(0, 'rgba(0,0,0,0)');
+    gr.addColorStop(0.3, base + (alpha * 0.4) + ')');
+    gr.addColorStop(1, base + Math.min(alpha + 0.22, 0.97) + ')');
+  }
+  ctx.fillStyle = gr;
+  ctx.fillRect(0, 0, W, H);
+
+  // Text block
+  var PAD = 68, maxW = W - PAD * 2;
+  var tsz = state.titleSize;
+
+  var startY;
+  if (state.position === 'top') startY = 108;
+  else if (state.position === 'lower third') startY = 950;
+  else startY = 1160;
+
+  var y = startY;
+
+  // Board name
+  ctx.textAlign = 'left';
+  ctx.font = '600 30px "Caveat"';
+  ctx.fillStyle = state.accent;
+  ctx.globalAlpha = 0.82;
+  ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 8;
+  ctx.fillText(state.board, PAD, y);
+  ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+  y += 16;
+
+  // Accent rule
+  ctx.fillStyle = state.accent;
+  ctx.globalAlpha = 0.55;
+  ctx.fillRect(PAD, y, 48, 2);
+  ctx.globalAlpha = 1;
+  y += 28;
+
+  // Title
+  ctx.font = 'italic ' + tsz + 'px "Playfair Display"';
+  ctx.fillStyle = '#e8ddd0';
+  ctx.shadowColor = 'rgba(0,0,0,0.65)'; ctx.shadowBlur = 14; ctx.shadowOffsetY = 2;
+  var titleText = (state.title || 'your pin title here').toLowerCase();
+  var tLines = wrapText(ctx, titleText, PAD, y, maxW, Math.round(tsz * 1.22));
+  ctx.shadowBlur = 0; ctx.shadowOffsetY = 0;
+  y += tLines * Math.round(tsz * 1.22) + 22;
+
+  // Subtitle
+  if (state.subtitle.trim()) {
+    ctx.font = 'italic 400 38px "Lora"';
+    ctx.fillStyle = 'rgba(232,221,208,0.68)';
+    ctx.shadowColor = 'rgba(0,0,0,0.5)'; ctx.shadowBlur = 8;
+    var subLines = wrapText(ctx, state.subtitle.toLowerCase(), PAD, y, maxW, 52);
+    ctx.shadowBlur = 0;
+    y += subLines * 52 + 20;
+  }
+
+  // Signature
+  if (state.signature.trim()) {
+    ctx.font = '400 34px "Caveat"';
+    ctx.fillStyle = state.accent;
+    ctx.shadowColor = 'rgba(0,0,0,0.45)'; ctx.shadowBlur = 6;
+    ctx.fillText('❆  ' + state.signature.toLowerCase(), PAD, y);
+    ctx.shadowBlur = 0;
+  }
+
+  // Corner accent star (opposite corner from text)
+  var cx = W - 52;
+  var cy = state.position === 'top' ? H - 55 : 62;
+  ctx.font = '24px "Caveat"';
+  ctx.fillStyle = state.accent;
+  ctx.globalAlpha = 0.2;
+  ctx.textAlign = 'center';
+  ctx.fillText('❆', cx, cy);
+  ctx.globalAlpha = 1;
+  ctx.textAlign = 'left';
+}
+
+// ── Service worker ────────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./pin-generator-sw.js').catch(function(){});
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+document.fonts.ready.then(renderPin);
+</script>
+</body>
+</html>
