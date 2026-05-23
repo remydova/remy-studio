@@ -876,7 +876,7 @@ async function handleGenerate() {
     document.getElementById('song-select').value = (st.song + 1) % 34;
     updateStatusBar();
 
-    renderAll(data, song, closer, descProp, st.issue);
+    await renderAll(data, song, closer, descProp, st.issue);
     showOutput();
 
   } catch(err) {
@@ -884,7 +884,7 @@ async function handleGenerate() {
     const fallback = makeFallback(st.issue, song, closer, descProp);
     enforceCloser(fallback, closer);
     currentRender = {data: fallback, song, closer, descProp, issue: st.issue};
-    renderAll(fallback, song, closer, descProp, st.issue);
+    await renderAll(fallback, song, closer, descProp, st.issue);
     showOutput();
   } finally {
     setLoading(false);
@@ -1003,8 +1003,8 @@ function enforceCloser(data, closer) {
 // RENDER
 // ================================================================
 
-function renderAll(data, song, closer, descProp, issue) {
-  renderNewsletter(data.newsletter, song, data.youtube_description.song_line);
+async function renderAll(data, song, closer, descProp, issue) {
+  await renderNewsletter(data.newsletter, song);
   renderVideos(data.videos, closer);
   renderNotes(data.newsletter);
   renderPins(data.pins);
@@ -1013,12 +1013,21 @@ function renderAll(data, song, closer, descProp, issue) {
 }
 
 // --- Newsletter ---
-function renderNewsletter(nl, song, songLine) {
+async function renderNewsletter(nl, song) {
   const el = document.getElementById('nl-preview');
 
   const sec1 = (nl.section1_body || '').split(/\n\n+/)
     .map(p => `<p>${esc(p)}</p>`).join('');
-  const softSentence = (songLine || '').replace(/^[^a-zA-Z]+/, '').replace(/:\s*https?:\/\/\S+$/, '').trim();
+  let songBlurb = '';
+  try {
+    const blurbRaw = await callAPI(
+      `write 1-2 sentences recommending a lofi song in remy's voice. the song is called "${song.t}". its world: ${song.i}. lowercase. intimate, like whispering to a close friend. no em dashes. never start with "the song this week is". return only the sentence(s), nothing else.`
+    );
+    songBlurb = blurbRaw.trim();
+  } catch(e) {
+    songBlurb = `${song.t} has been the quiet one playing in the background tonight.`;
+  }
+
   const sec2 = (nl.section2_body || '').split(/\n\n+/)
     .map(p => `<p>${esc(p)}</p>`).join('');
 
@@ -1036,7 +1045,7 @@ function renderNewsletter(nl, song, songLine) {
       <h3>${esc(nl.section2_heading)}</h3>
       ${sec2}
       <div class="nl-prompt">✦ ${esc(nl.prompt)}</div>
-      <div class="nl-song">the song this week is ${esc(song.t)} — ${esc(softSentence)}. listen here if you want something to drift by: <a href="${esc(song.u)}" target="_blank" rel="noopener">${esc(song.u)}</a></div>
+      <div class="nl-song">${esc(songBlurb)} listen here if you want something to drift by: <a href="${esc(song.u)}" target="_blank" rel="noopener">${esc(song.u)}</a></div>
       <div class="nl-closing"><p>${nl.closing.replace(/\n/g,'<br>')}</p></div>
       <p class="nl-ps">p.s. ${esc(nl.ps)}</p>
     </div>
