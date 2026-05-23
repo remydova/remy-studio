@@ -266,6 +266,9 @@ textarea::placeholder{color:var(--text-muted);font-style:italic;}
   border-radius:8px;padding:0.85rem 1.1rem;margin:1.25rem 0;
   font-style:italic;color:var(--lav);font-size:0.88rem;line-height:1.6;
 }
+.nl-song{margin:1.25rem 0;font-size:0.88rem;color:var(--text-dim);line-height:1.6;font-style:italic;}
+.nl-song a{color:var(--teal);text-decoration:none;}
+.nl-song a:hover{text-decoration:underline;}
 .nl-closing{margin-top:1rem;}
 .nl-ps{font-size:0.85rem;color:var(--text-dim);font-style:italic;margin-top:0.75rem;}
 
@@ -1001,7 +1004,7 @@ function enforceCloser(data, closer) {
 // ================================================================
 
 function renderAll(data, song, closer, descProp, issue) {
-  renderNewsletter(data.newsletter);
+  renderNewsletter(data.newsletter, song, data.youtube_description.song_line);
   renderVideos(data.videos, closer);
   renderNotes(data.newsletter);
   renderPins(data.pins);
@@ -1010,11 +1013,12 @@ function renderAll(data, song, closer, descProp, issue) {
 }
 
 // --- Newsletter ---
-function renderNewsletter(nl) {
+function renderNewsletter(nl, song, songLine) {
   const el = document.getElementById('nl-preview');
 
   const sec1 = (nl.section1_body || '').split(/\n\n+/)
     .map(p => `<p>${esc(p)}</p>`).join('');
+  const softSentence = (songLine || '').replace(/^[^a-zA-Z]+/, '').replace(/:\s*https?:\/\/\S+$/, '').trim();
   const sec2 = (nl.section2_body || '').split(/\n\n+/)
     .map(p => `<p>${esc(p)}</p>`).join('');
 
@@ -1032,6 +1036,7 @@ function renderNewsletter(nl) {
       <h3>${esc(nl.section2_heading)}</h3>
       ${sec2}
       <div class="nl-prompt">✦ ${esc(nl.prompt)}</div>
+      <div class="nl-song">the song this week is ${esc(song.t)} — ${esc(softSentence)}. listen here if you want something to drift by: <a href="${esc(song.u)}" target="_blank" rel="noopener">${esc(song.u)}</a></div>
       <div class="nl-closing"><p>${nl.closing.replace(/\n/g,'<br>')}</p></div>
       <p class="nl-ps">p.s. ${esc(nl.ps)}</p>
     </div>
