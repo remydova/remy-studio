@@ -530,8 +530,9 @@ Return ONLY valid JSON - no markdown, no preamble:
     "prompt": "one gentle journaling question - intimate not generic",
     "closing": "3-4 warm closing sentences ending with variation of it's okay to be you",
     "ps": "one short tender PS",
-    "note_wednesday": "2-3 sentences for Substack Notes. casual behind the scenes.",
-    "note_friday": "2-3 sentences for Substack Notes. quiet moment or gentle tease for next week.",
+    "note_wednesday": "2-3 sentences for Substack Notes. NOT about the newsletter. a specific small moment from remy's week - something miso did, something she noticed on a walk, a chord that arrived, something juni or theo said. lowercase. no em dashes. feels like a text to a close friend, not a promo.",
+    "note_friday": "2-3 sentences for Substack Notes. NOT about the newsletter. a quiet observation or small discovery - something she is sitting with, something she made, something about the season or the light or the late hour. lowercase. no em dashes. intimate and specific.",
+    "note_sunday": "2-3 sentences for Substack Notes. sunday energy - slower, softer. something about the day itself, the quality of light, what she is reading or making or not doing. maybe miso. maybe iris. lowercase. no em dashes. feels like the last quiet hour before the week starts.",
     "_casing_rule": "CRITICAL: everything is lowercase. every single word. no exceptions. remy, miso, iris, juni, theo, kent ohio, book titles, author names, months, days — all lowercase. only URLs use uppercase letters.",
     "_author_frequency_rule": "remy rarely mentions authors by name. when she does it is one brief natural reference at most. most newsletters have zero author references. writing is primarily about small specific things she notices.",
     "_juni_rule": "juni is remy's adult best friend — same age as remy, mid-twenties. she grew up in cleveland, they met in college. she is a multi-media artist. never write juni as a child."
@@ -628,9 +629,11 @@ async function renderNewsletter(nl, song) {
 function renderNotes(nl) {
   document.getElementById('notes-body').innerHTML = `
     <div class="note-card"><div class="note-header"><span class="note-day-badge">wednesday note</span><button class="copy-btn" id="copy-wed">copy</button></div><div class="note-text" id="note-wed-text">${esc(nl.note_wednesday)}</div></div>
-    <div class="note-card"><div class="note-header"><span class="note-day-badge">friday note</span><button class="copy-btn" id="copy-fri">copy</button></div><div class="note-text" id="note-fri-text">${esc(nl.note_friday)}</div></div>`;
+    <div class="note-card"><div class="note-header"><span class="note-day-badge">friday note</span><button class="copy-btn" id="copy-fri">copy</button></div><div class="note-text" id="note-fri-text">${esc(nl.note_friday)}</div></div>
+    <div class="note-card"><div class="note-header"><span class="note-day-badge">sunday note</span><button class="copy-btn" id="copy-sun">copy</button></div><div class="note-text" id="note-sun-text">${esc(nl.note_sunday)}</div></div>`;
   document.getElementById('copy-wed').onclick = () => copyText(nl.note_wednesday, 'copy-wed');
   document.getElementById('copy-fri').onclick = () => copyText(nl.note_friday, 'copy-fri');
+  document.getElementById('copy-sun').onclick = () => copyText(nl.note_sunday, 'copy-sun');
 }
 
 const VIDEO_META = [
@@ -761,7 +764,7 @@ async function handleSaveToGithub() {
   const payload = {
     issue_number:issue, generated_date:new Date().toISOString(), mood,
     featured_song:{title:song.t,youtube_url:song.u},
-    newsletter:{subject:data.newsletter.subject,title:data.newsletter.title,opening:data.newsletter.opening,section1_heading:data.newsletter.section1_heading,section1_body:data.newsletter.section1_body,quote:data.newsletter.quote,section2_heading:data.newsletter.section2_heading,section2_body:data.newsletter.section2_body,prompt:data.newsletter.prompt,closing:data.newsletter.closing,ps:data.newsletter.ps,note_wednesday:data.newsletter.note_wednesday,note_friday:data.newsletter.note_friday},
+    newsletter:{subject:data.newsletter.subject,title:data.newsletter.title,opening:data.newsletter.opening,section1_heading:data.newsletter.section1_heading,section1_body:data.newsletter.section1_body,quote:data.newsletter.quote,section2_heading:data.newsletter.section2_heading,section2_body:data.newsletter.section2_body,prompt:data.newsletter.prompt,closing:data.newsletter.closing,ps:data.newsletter.ps,note_wednesday:data.newsletter.note_wednesday,note_friday:data.newsletter.note_friday,note_sunday:data.newsletter.note_sunday},
     videos:{affirmation:buildVideo('affirmation'),tip:buildVideo('tip'),remy_moment:buildVideo('remy_moment'),quote_video:buildVideo('quote_video')},
     pins:(data.pins||[]).map(p=>({board:p.board,title:p.title,description:p.description,tags:p.tags})),
     youtube_description:{title:data.youtube_description.youtube_title,body:data.youtube_description.body,song_line:data.youtube_description.song_line,property_line:data.youtube_description.property_line,hashtags:data.youtube_description.hashtags},
@@ -823,8 +826,9 @@ function makeFallback(issue, song, closer, descProp) {
       prompt:'what is one question you have been carrying without trying to answer?',
       closing:`thank you for being here. for reading these quiet notes at whatever hour you found them. it means more than i know how to say. you do not have to be more than you are right now. it is okay to be you.`,
       ps:'miso says hi. (she does not. but she would if she could.)',
-      note_wednesday:`it is wednesday and the newsletter went out last night. still thinking about that paragraph on questions. anyway - hi. hope the week is being gentle with you. 🌙`,
-      note_friday:`friday already. played something new last night that felt like something. more soon. rest well this weekend.`,
+      note_wednesday:`miso knocked my pen off the desk three times tonight. the third time i just let it stay on the floor. some battles aren't worth it.`,
+      note_friday:`found a chord at 11pm that i keep coming back to. don't know what it belongs to yet. sitting with it.`,
+      note_sunday:`sunday has a particular quality of light here - slower somehow, like it knows it doesn't have to hurry. miso found the one warm patch on the floor and has not moved in two hours. same, honestly.`,
     },
     videos:{
       affirmation:{title:`you are allowed to rest`,hook:'this is your permission slip',cards:['rest is not laziness','your nervous system needs quiet','you have earned this breath',cTxt],caption_en:`for the introverts who need a reminder today. 🌙 #lofi #introvert #selfcare`},
